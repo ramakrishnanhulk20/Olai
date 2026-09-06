@@ -31,9 +31,9 @@ the public address:
 Olai booted: dry run, exchange <name>, ledger ./data/olai.db, address http://127.0.0.1:4000
 ```
 
-The exchange name is `mcp` when a Binance sign-in token exists, and the deterministic stand-in
-when it does not. The stand-in is only allowed in a dry run: `buildService` refuses to boot a
-live run without a real connection.
+With `OLAI_EXCHANGE=auto`, the name comes from what you have: the Binance REST key first, then a
+stored MCP token, then the deterministic stand-in, and the stand-in in a dry run only.
+`buildService` refuses to boot a live run without a real connection.
 
 **2. The question**, back as Olai read it.
 
@@ -125,6 +125,6 @@ PASS 7. this run spent $0.0000 across 0 settled payments (0 signatures claimed)
 |---|---|
 | A list of settings with one problem each, then nothing starts | `loadConfig` refused the `.env`. Fix the named keys and run again. |
 | `Olai will not run live without a Binance connection` | `OLAI_DRY_RUN=false` with no sign-in token. Either finish the OAuth step or go back to dry run. |
-| `SKIP 1` in prove, wallet not connected | Run `baw auth signin` again. The wallet session lasts 48 hours. |
+| `FAIL 1` in prove, wallet not connected or `baw` not installed | Install the CLI with `npm install -g @binance/agentic-wallet`, then run `baw auth signin` again. The wallet session lasts 48 hours. |
 | Every x402 option comes back `ACTION_REQUIRED` with `INSUFFICIENT_BALANCE` | The Agentic Wallet is empty. Fund it on BNB Smart Chain. |
 | A refusal you did not expect | Read the rule id in the verdict against [Write a rulebook](../guides/write-a-rulebook.md). |

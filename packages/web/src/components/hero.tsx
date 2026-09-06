@@ -198,10 +198,11 @@ export function Hero() {
 
         <motion.p
           variants={enter}
-          className="mt-[clamp(1rem,2.5vh,1.75rem)] max-w-[54ch] font-body text-[1.25rem] leading-[1.5] text-ink/75"
+          className="mt-[clamp(1rem,2.5vh,1.75rem)] max-w-[92ch] font-body text-[1.25rem] leading-[1.5] text-ink/75"
         >
-          An analyst agent that buys its own intelligence a cent at a time, and trades only inside a
-          written rulebook.
+          An analyst agent for one Binance sub-account. It buys the data it needs a cent at a time
+          from its own Binance wallet, trades only inside a rulebook you write, and keeps a receipt
+          for both.
         </motion.p>
 
         <motion.div

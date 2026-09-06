@@ -13,9 +13,11 @@ const flat: Variants = { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 
 export function Gate({
   onToken,
   notice,
+  onBack,
 }: {
   onToken: (token: string) => void;
   notice?: string | null;
+  onBack?: () => void;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
   const [value, setValue] = useState("");
@@ -105,6 +107,15 @@ export function Gate({
           >
             Open the desk
           </motion.button>
+          {onBack ? (
+            <button
+              type="button"
+              onClick={onBack}
+              className="desk-button-quiet px-6 py-3.5 text-[0.95rem]"
+            >
+              Back to the replay
+            </button>
+          ) : null}
         </motion.form>
 
         {(problem ?? notice) ? (

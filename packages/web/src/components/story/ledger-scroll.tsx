@@ -100,9 +100,12 @@ export function LedgerScroll() {
         className="relative z-20 grid grid-cols-12 items-end gap-y-[clamp(1rem,2.5vh,1.75rem)]"
       >
         <motion.div variants={enter} className="col-span-12 md:col-span-5">
-          <p className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/45">
-            <span className="block size-2 rounded-[2px] bg-amber" />
-            captured from a live run
+          <p className="flex items-start gap-3 font-mono text-[0.72rem] uppercase leading-[1.6] tracking-[0.18em] text-ink/45">
+            <span className="mt-[0.35em] block size-2 shrink-0 rounded-[2px] bg-amber" />
+            <span className="max-w-[46ch]">
+              captured from a live run: the payment is real USDT on BNB Smart Chain, the order filled
+              on the Binance spot testnet
+            </span>
           </p>
           <h2
             className="mt-[clamp(0.75rem,2vh,1.25rem)] font-display font-extrabold text-ink"

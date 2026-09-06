@@ -10,6 +10,12 @@ const rise: Variants = {
 
 const flat: Variants = { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } };
 
+// Two settlements of this product's own data payments, on BNB Smart Chain.
+const settlements = [
+  "0xd31a8a75f6df501e1aba6166b248a2a8a1e928a52c401fae9465181082ad9a43",
+  "0xb495d3c91ebff850ce01e19dc8826e8adf433028b3516f48a8ad04b1522ce9bb",
+];
+
 export function Cent() {
   const shouldReduce = useReducedMotion() ?? false;
   const enter = shouldReduce ? flat : rise;
@@ -89,6 +95,34 @@ export function Cent() {
             subscriptions, no API keys to hand out, and every payment settles on BNB Smart Chain with
             a hash it keeps.
           </motion.p>
+
+          <motion.p
+            variants={enter}
+            className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-[62ch] font-body text-[1.0625rem] leading-[1.65] text-ink/70 md:text-[1.125rem]"
+          >
+            A desk that runs one of these pays for the data it actually used that day, not for a
+            subscription it might not open.
+          </motion.p>
+
+          <motion.div variants={enter} className="mt-[clamp(1.5rem,4vh,2.5rem)]">
+            <p className="flex items-center gap-3 font-mono text-[0.72rem] leading-[1.5] tracking-[0.06em] text-ink/45">
+              <span className="block size-2 shrink-0 rounded-[2px] bg-amber" />
+              Two of Olai&rsquo;s own cents, settled on BNB Smart Chain:
+            </p>
+            <div className="mt-3 flex flex-wrap gap-x-7 gap-y-2 pl-[1.25rem]">
+              {settlements.map((hash) => (
+                <a
+                  key={hash}
+                  href={`https://bscscan.com/tx/${hash}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-[0.8rem] text-amber underline decoration-amber/40 underline-offset-4 transition-colors duration-300 hover:decoration-amber"
+                >
+                  {hash.slice(0, 10)}
+                </a>
+              ))}
+            </div>
+          </motion.div>
         </motion.div>
 
         <motion.div

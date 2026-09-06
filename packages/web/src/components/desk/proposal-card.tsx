@@ -11,6 +11,10 @@ import { bscscan, host, percent, qty, shortHash, usd } from "@/lib/format";
  * The rulebook verdict sits under the proposal on purpose: the owner should see
  * what the rules already said before deciding anything, including which rule id
  * said it.
+ *
+ * In replay the card only prints what the ledger export carries. Confidence, the
+ * order type, the reasoning and the risk list were not exported, so they are left
+ * out rather than filled in.
  */
 
 const STATUS: Record<ProposalStatus, { label: string; tone: string; dot: string }> = {
@@ -25,17 +29,21 @@ const STATUS: Record<ProposalStatus, { label: string; tone: string; dot: string 
 export function ProposalCard({
   session,
   dryRun,
-  busy,
-  problem,
+  busy = null,
+  problem = null,
+  replay = false,
+  fillSummary,
   onApprove,
   onReject,
 }: {
   session: SessionRecord;
   dryRun: boolean;
-  busy: "approve" | "reject" | null;
-  problem: { message: string; nextStep: string } | null;
-  onApprove: () => void;
-  onReject: (reason: string) => void;
+  busy?: "approve" | "reject" | null;
+  problem?: { message: string; nextStep: string } | null;
+  replay?: boolean;
+  fillSummary?: string;
+  onApprove?: () => void;
+  onReject?: (reason: string) => void;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
   const [rejecting, setRejecting] = useState(false);
@@ -43,7 +51,7 @@ export function ProposalCard({
 
   const proposal = session.proposal;
   const status = STATUS[session.status];
-  const decidable = session.status === "pending" && proposal?.action.type === "order";
+  const decidable = !replay && session.status === "pending" && proposal?.action.type === "order";
 
   return (
     <motion.section
@@ -80,31 +88,37 @@ export function ProposalCard({
               : "HOLD"}
           </p>
           {proposal.action.type === "order" ? (
-            <p className="mt-2 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/40">
-              {proposal.action.orderType}
-              {proposal.action.limitPrice === undefined
-                ? ""
-                : ` at ${usd(proposal.action.limitPrice)}`}
-            </p>
+            replay ? null : (
+              <p className="mt-2 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/40">
+                {proposal.action.orderType}
+                {proposal.action.limitPrice === undefined
+                  ? ""
+                  : ` at ${usd(proposal.action.limitPrice)}`}
+              </p>
+            )
           ) : (
             <p className="mt-2 max-w-[60ch] text-[0.92rem] leading-[1.5] text-ink/60">
               {proposal.action.reason}
             </p>
           )}
 
-          <div className="mt-6">
-            <div className="flex items-baseline justify-between">
-              <span className="desk-label">Confidence</span>
-              <span className="font-mono text-[0.72rem] text-ink/50">{percent(proposal.confidence)}</span>
+          {replay ? null : (
+            <div className="mt-6">
+              <div className="flex items-baseline justify-between">
+                <span className="desk-label">Confidence</span>
+                <span className="font-mono text-[0.72rem] text-ink/50">
+                  {percent(proposal.confidence)}
+                </span>
+              </div>
+              <div className="desk-meter mt-2" aria-hidden>
+                <motion.span
+                  initial={shouldReduce ? false : { width: 0 }}
+                  animate={{ width: percent(proposal.confidence) }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                />
+              </div>
             </div>
-            <div className="desk-meter mt-2" aria-hidden>
-              <motion.span
-                initial={shouldReduce ? false : { width: 0 }}
-                animate={{ width: percent(proposal.confidence) }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              />
-            </div>
-          </div>
+          )}
 
           {proposal.reasoning ? (
             <p className="mt-6 max-w-[64ch] text-[0.92rem] leading-[1.6] text-ink/60">
@@ -114,7 +128,10 @@ export function ProposalCard({
 
           <div className="mt-7 grid gap-6 sm:grid-cols-2">
             <div>
-              <p className="desk-label">Data it paid for</p>
+              <p className="desk-label">Data it says it used</p>
+              <p className="mt-1.5 text-[0.78rem] leading-[1.4] text-ink/35">
+                the model writes this list; the ledger below is the record
+              </p>
               {proposal.dataUsed.length === 0 ? (
                 <p className="mt-2 text-[0.85rem] text-ink/45">Nothing bought for this one.</p>
               ) : (
@@ -147,7 +164,11 @@ export function ProposalCard({
 
             <div>
               <p className="desk-label">What could go wrong</p>
-              {proposal.risks.length === 0 ? (
+              {replay ? (
+                <p className="mt-2 text-[0.85rem] leading-[1.5] text-ink/45">
+                  The export does not carry the risk list.
+                </p>
+              ) : proposal.risks.length === 0 ? (
                 <p className="mt-2 text-[0.85rem] text-ink/45">Olai named no risks.</p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2">
@@ -177,10 +198,16 @@ export function ProposalCard({
           >
             {session.verdict.allowed ? "The rulebook allows this" : "The rulebook refuses this"}
           </p>
-          <p className="mt-2 font-mono text-[0.72rem] text-ink/45">
-            Biggest order the rules allow right now {usd(session.verdict.effectiveMaxOrderUsd)}
-            {session.verdict.requiresApproval ? " · your approval required" : ""}
-          </p>
+          {replay ? (
+            <p className="mt-2 font-mono text-[0.72rem] text-ink/45">
+              {session.verdict.requiresApproval ? "Your approval required" : ""}
+            </p>
+          ) : (
+            <p className="mt-2 font-mono text-[0.72rem] text-ink/45">
+              Biggest order the rules allow right now {usd(session.verdict.effectiveMaxOrderUsd)}
+              {session.verdict.requiresApproval ? " · your approval required" : ""}
+            </p>
+          )}
           <ul className="mt-3 flex flex-col gap-2">
             {session.verdict.reasons.map((line, index) => (
               <li key={`${line}-${index}`} className="text-[0.88rem] leading-[1.5] text-ink/70">
@@ -226,7 +253,7 @@ export function ProposalCard({
           <div className="flex flex-col gap-3 sm:flex-row">
             <motion.button
               type="button"
-              onClick={onApprove}
+              onClick={() => onApprove?.()}
               disabled={busy !== null}
               whileHover={shouldReduce || busy ? undefined : { scale: 1.02 }}
               whileTap={shouldReduce || busy ? undefined : { scale: 0.99 }}
@@ -266,7 +293,7 @@ export function ProposalCard({
                   <button
                     type="button"
                     onClick={() => {
-                      onReject(reason.trim() === "" ? "The owner gave no reason." : reason.trim());
+                      onReject?.(reason.trim() === "" ? "The owner gave no reason." : reason.trim());
                       setRejecting(false);
                       setReason("");
                     }}
@@ -279,6 +306,22 @@ export function ProposalCard({
               </motion.div>
             ) : null}
           </AnimatePresence>
+        </div>
+      ) : null}
+
+      {replay ? (
+        <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <button
+            type="button"
+            disabled
+            className="desk-button-quiet px-7 py-3.5 text-[0.95rem]"
+            title="The owner approved this one when the run was recorded."
+          >
+            Approved in the recorded run
+          </button>
+          {fillSummary ? (
+            <span className="font-mono text-[0.75rem] text-ok/80">{fillSummary}</span>
+          ) : null}
         </div>
       ) : null}
 

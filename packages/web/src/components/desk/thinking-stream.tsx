@@ -9,15 +9,21 @@ import type { BrainEvent } from "@/lib/sse";
  *
  * This is the live feed, not the record. Every line here is also written to the
  * ledger, so a dropped connection loses the commentary and nothing else.
+ *
+ * In replay the same lines arrive on a timer off the recorded ledger, and each
+ * one carries a tag saying so, so no row can be mistaken for something happening
+ * now.
  */
 export function ThinkingStream({
   events,
   running,
   live,
+  replay = false,
 }: {
   events: BrainEvent[];
   running: boolean;
   live: boolean;
+  replay?: boolean;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
   const endRef = useRef<HTMLDivElement>(null);
@@ -38,15 +44,17 @@ export function ThinkingStream({
             live ? "text-ok" : "text-ink/35"
           }`}
         >
-          {live ? "Live feed" : "Feed reconnecting"}
+          {replay ? "Recorded feed" : live ? "Live feed" : "Feed reconnecting"}
         </span>
       </header>
 
       {events.length === 0 ? (
         <p className="mt-5 text-[0.9rem] leading-[1.5] text-ink/45">
-          {running
-            ? "Waiting for Olai's first move."
-            : "Nothing yet. Ask Olai a question and every step it takes shows up here."}
+          {replay
+            ? "The recorded run starts in a moment."
+            : running
+              ? "Waiting for Olai's first move."
+              : "Nothing yet. Ask Olai a question and every step it takes shows up here."}
         </p>
       ) : (
         <div className="desk-scroll mt-5 max-h-[26rem] pr-2" data-lenis-prevent>
@@ -59,6 +67,11 @@ export function ThinkingStream({
                 transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                 className="border-b border-ink/[0.06] py-2.5 last:border-0"
               >
+                {replay ? (
+                  <span className="mb-1 block font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink/25">
+                    replay
+                  </span>
+                ) : null}
                 <Line event={event} />
               </motion.div>
             ))}

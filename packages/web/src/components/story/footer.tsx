@@ -7,7 +7,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 const links: Array<{ label: string; href: string }> = [
   { label: "Open the desk", href: "/app" },
   { label: "Documentation", href: "/docs" },
-  { label: "GitHub", href: process.env.NEXT_PUBLIC_REPO_URL ?? "#" },
+  { label: "GitHub", href: process.env.NEXT_PUBLIC_REPO_URL ?? "https://github.com/ramakrishnanhulk20/Olai" },
 ];
 
 const rise: Variants = {
@@ -54,15 +54,25 @@ export function StoryFooter() {
         </motion.nav>
       </motion.div>
 
-      <motion.p
+      <motion.div
         initial={shouldReduce ? undefined : { opacity: 0 }}
         whileInView={shouldReduce ? undefined : { opacity: 1 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.8, delay: 0.15 }}
-        className="relative z-20 mt-[clamp(2.5rem,7vh,4rem)] font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink/35"
+        className="relative z-20 mt-[clamp(2.5rem,7vh,4rem)] flex flex-col gap-[clamp(1rem,2.5vh,1.5rem)]"
       >
-        Self-audited. Threat model and executed attack scripts in the repository.
-      </motion.p>
+        <p className="max-w-[64ch] font-body text-[0.95rem] leading-[1.65] text-ink/45">
+          An olai is the palm leaf that old Tamil ledgers were written on. Once a line was cut into
+          it, the only way to change the record was to destroy the leaf.
+        </p>
+
+        <a
+          href={`${process.env.NEXT_PUBLIC_REPO_URL ?? "https://github.com/ramakrishnanhulk20/Olai"}/blob/main/docs/security/attacks/SUMMARY.md`}
+          className="relative w-fit font-mono text-[0.72rem] uppercase leading-[1.6] tracking-[0.18em] text-ink/35 transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-amber after:transition-all after:duration-300 hover:text-ink hover:after:w-full"
+        >
+          Self-audited: fourteen attacks executed, thirteen blocked, one published as a known gap.
+        </a>
+      </motion.div>
     </footer>
   );
 }

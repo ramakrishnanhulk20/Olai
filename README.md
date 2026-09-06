@@ -2,6 +2,8 @@
 
 An analyst agent that buys its own market intelligence a cent at a time from its Binance wallet, trades on the owner's Binance sub-account only inside a written rulebook, and can prove what every cent and every order was for.
 
+Most agents on Agent OS use one door. Olai uses four at once: it finds data in the Bazaar, pays for it from its Binance wallet over x402, reads the market through the exchange API, and keeps a receipt for every cent and every order.
+
 [Live App](PENDING-LINK) · [Documentation](PENDING-LINK/docs) · [Demo Video](PENDING-LINK)
 
 ## Live deployments
@@ -11,9 +13,9 @@ An analyst agent that buys its own market intelligence a cent at a time from its
 | Olai service | Self-hosted, Node 22 | Coded and unit-tested; not yet deployed to a public host (`packages/agent`) |
 | Binance exchange REST API | Binance-hosted, `https://testnet.binance.vision` by default, `https://api.binance.com` in prod | Live door: Olai trades through this API with a trade-only HMAC key on an isolated sub-account, no withdrawal permission, spot testnet first (`packages/agent/src/exchange/rest.ts`) |
 | Binance MCP server | Binance-hosted, `https://agent.binance.com/mcp/agentic` | Held: Olai's own MCP client is coded and tested (`packages/agent/src/mcp`), but Binance's consent page answered "The AI Agent you are using is not currently supported. Please connect using a supported Agent to continue. (3346001-e450fe8d)" on 2026-09-06, because the allowlist admits only Binance's own agents; the refusal is recorded in the threat model |
-| Binance Agentic Wallet | Binance-hosted, MPC wallet, driven through the `baw` CLI | Signed in and connected; the wallet needs a small BSC funding transfer before it can sign a live payment |
+| Binance Agentic Wallet | Binance-hosted, MPC wallet, driven through the `baw` CLI | Signed in, connected and funded; it has signed three live x402 payments in real USDT on BNB Smart Chain, each with the settlement hash linked below |
 | B402 Bazaar | Binance-hosted, public catalogue at `https://www.binance.com/bapi/ramp/v1/public/ramp/b402/bazaar/resources` | Live, no auth required. A keyword search against it returned real listings on 2026-09-06 (see `reference/bazaar-catalog-summary.txt`) |
-| Merchants used: Nansen, CoinMarketCap | Third parties, paid over x402 through the Bazaar | Both probed live and answered HTTP 402 on 2026-09-06 (`packages/agent/test/x402/merchants.test.ts`); not yet paid on a live run |
+| Merchants used: Nansen, CoinMarketCap | Third parties, paid over x402 through the Bazaar | Both probed live and answered HTTP 402 on 2026-09-06 (`packages/agent/test/x402/merchants.test.ts`). Nansen has been paid on three live runs, each one real USDT on BNB Smart Chain with its own settlement hash, linked below. CoinMarketCap answered its 402 but has not been paid |
 
 ## Overview
 
@@ -22,6 +24,8 @@ A trader who wants an edge today either pays for a data subscription whether or 
 Olai is an analyst agent for one Binance sub-account. The owner writes a plain-English rulebook once: the biggest order, the most it may lose in a day, which markets it may touch, how much it may spend on data. When asked a question, Olai searches Binance's B402 Bazaar for the paid data that answers it, pays a merchant a cent or two straight from its Binance Agentic Wallet over x402, reads the live market through Binance's exchange REST API on the sub-account, and proposes one action. The owner approves or rejects it. Every step, every cost and every verdict lands in a hash-chained ledger that nobody, including Olai, can quietly edit afterward.
 
 The product is not the trading idea. It is the control system around it: a rulebook enforced in code before the model's output ever reaches an order or a payment, and a ledger that turns "trust the agent" into "read the ledger."
+
+An olai is the palm leaf that old Tamil ledgers were written on. Once a line was cut into it, the only way to change the record was to destroy the leaf.
 
 ### Today versus Olai
 
@@ -59,7 +63,7 @@ The product is not the trading idea. It is the control system around it: a ruleb
 
 | Agent OS piece | How Olai uses it |
 |---|---|
-| Exchange REST API | Reads the ticker, order book, klines, balances and positions, and sends spot orders, all through signed HTTP calls to the Spot REST API (`https://testnet.binance.vision` by default, `https://api.binance.com` when `BINANCE_API_ENV=prod`) with a trade-only HMAC key on an isolated sub-account, no withdrawal permission. Binance's own docs list this REST and WebSocket surface as one of the Agent OS tools in its own right. `packages/agent/src/exchange/rest.ts` |
+| Exchange REST API | Reads the ticker, order book, klines, balances and positions, and sends spot orders, all through signed HTTP calls to the Spot REST API (`https://testnet.binance.vision` by default, `https://api.binance.com` when `BINANCE_API_ENV=prod`) with a trade-only HMAC key on an isolated sub-account, no withdrawal permission. Binance's own docs list this REST and WebSocket surface as one of the Agent OS tools in its own right. Every order Olai has actually placed was on the Binance spot testnet. `packages/agent/src/exchange/rest.ts` |
 | MCP server (held) | The other door to the same reads and orders. Olai's MCP client is coded and tested, selected by `OLAI_EXCHANGE=mcp` or by `auto` once a token exists, but Binance's consent screen refuses any agent outside its own allowlist, so this door stays closed until Binance admits third-party agents. `packages/agent/src/mcp/` |
 | Agentic Wallet | Drives the `baw` CLI directly: `wallet status`, `wallet settings`, `wallet balance`, `x402-payment preview`, `x402-payment sign`, `wallet tx-history`. `packages/agent/src/x402/baw.ts` |
 | x402 | Buyer side only. Signable on BSC (`eip155:56`), Base (`eip155:8453`) and Solana; BSC is tried first because that is where most Bazaar merchants settle and the wallet signs its stablecoins without a Permit2 approval. `packages/agent/src/bazaar/tokens.ts`, `packages/agent/src/x402/buyer.ts` |
@@ -244,36 +248,62 @@ flowchart TD
 
 `policy` and `ledger` are the two modules with no outgoing edges; they import nothing else in `src`. `exchange` depends only on `ports` (for shared types) and is otherwise self-contained across its own three files (`rest.ts`, `schemas.ts`, `sign.ts`); it is the door actually open, because Binance's MCP consent screen refuses Olai's own OAuth client today. `mcp` depends only on `ports` and is otherwise self-contained across its own four files (`client.ts`, `exchange.ts`, `oauth.ts`, `toolmap.ts`); it is coded and tested but held unused until Binance admits third-party agents.
 
-## The two-minute judge path
+## The judge's path, in three tiers
 
-1. Clone the repo and `cd` into it.
-2. `npm install`. Needs Node 22 or newer (see `.nvmrc`).
-3. Copy `.env.example` to `.env` and fill in the keys, explained below. At minimum you need `ANTHROPIC_API_KEY` and a `OLAI_OWNER_TOKEN` you invent yourself.
-4. `npm run dry-run -w @olai/agent -- "Should I trim my BNB position before the weekend?"`
+Named for what each one costs you.
 
-   This boots the whole service in dry-run mode and asks Olai that one question. It prints, in order: what it booted with (which exchange, the ledger path, the public address), the question, every tool call the agent makes and its result as it thinks, the final proposal with its confidence and risks, the rulebook's verdict, the approval and the resulting session status, every ledger line the session wrote, and whether the ledger's hash chain still holds across all of them.
+### Nothing to install
 
-5. `npm run prove -w @olai/agent`
+- **The landing page.** [Live App](PENDING-LINK). Its ledger section replays a captured real session line by line, every settlement hash linked to BscScan.
+- **The money, on chain.** Three cents, each one real USDT on BNB Smart Chain, each with a receipt anybody can open: [0xd31a8a75](https://bscscan.com/tx/0xd31a8a75f6df501e1aba6166b248a2a8a1e928a52c401fae9465181082ad9a43), [0x6962ad36](https://bscscan.com/tx/0x6962ad36ff991759c5801254aefaba68f8041a401f5a57b022a66976750f4335) and [0xb495d3c9](https://bscscan.com/tx/0xb495d3c91ebff850ce01e19dc8826e8adf433028b3516f48a8ad04b1522ce9bb). A Binance Agentic Wallet paid a Bazaar merchant over x402 on all three, and the chain says so without anyone having to take this README's word for it.
+- **The attacks.** [Fourteen attacks were run against Olai, thirteen were blocked, and the one that was not is written up in full](docs/security/attacks/SUMMARY.md).
 
-   This is the prove-it command. It runs seven steps against the real Binance Agentic Wallet and the real B402 Bazaar, no MCP connection required, and prints one `PASS`, `FAIL` or `SKIP` line per step. Only step 4 can spend real money, and only when `.env` sets `OLAI_DRY_RUN=false` and `OLAI_PROVE_SPEND=yes`; every other step is read only.
+### One command, no keys
 
-   Expected shape of the output:
+```bash
+git clone <this repository> olai && cd olai
+npm install
+npm run probe:bazaar -w @olai/agent
+```
 
-   ```
-   PASS 1. wallet CONNECTED, x402 daily limit $..., quota left $...
-   PASS 2. Bazaar has N wallet payable listings for "wallet balance" under $0.05, cheapest $... at ...
-   PASS 3. a real 402 previewed to payment ... with N options, top option is READY_TO_SIGN for $... in ... on chain ...
-   SKIP 4. OLAI_DRY_RUN is true, so Olai will not sign anything
-   PASS 5. ... priced BNBUSDT at ...
-   PASS 6. the ledger hash chain holds across all N lines
-   PASS 7. this run spent $0.0000 across 0 settled payments (0 signatures claimed)
-   Every step that ran, passed.
-   ```
+No API key, no account, no wallet. The probe searches the live B402 Bazaar and prints real listings at their real prices, then calls Nansen and CoinMarketCap and shows the HTTP 402 each one answers with, which is a merchant asking to be paid. If the `baw` wallet CLI is missing or signed out, the probe prints one line saying so and runs everything that does not need a wallet. `npm install` needs Node 22 or newer (see `.nvmrc`) and compiles `better-sqlite3` from source, which is the slow part of this tier.
 
-   Actual output from a live run:
+### Two keys, ninety seconds
 
-   ```
-   ```text
+Copy `.env.example` to `.env` and fill in two keys: `ANTHROPIC_API_KEY` from console.anthropic.com, and a free Binance spot testnet key from `https://testnet.binance.vision` as `BINANCE_API_KEY` and `BINANCE_API_SECRET`. Invent an `OLAI_OWNER_TOKEN` while you are in the file: any string that starts `ol.` and runs to 24 characters or more.
+
+```bash
+npm run dry-run -w @olai/agent -- "Should I trim my BNB position before the weekend?"
+```
+
+The market numbers in that run come from the Binance spot testnet, read through the same exchange client a live account uses. The command boots the whole service in dry-run mode and asks Olai that one question. It prints, in order: what it booted with (which exchange, the ledger path, the public address), the question, every tool call the agent makes and its result as it thinks, the final proposal with its confidence and risks, the rulebook's verdict, the approval and the resulting session status, every ledger line the session wrote, and whether the ledger's hash chain still holds across all of them. It takes about ninety seconds, because the brain is a real Claude call that thinks before it answers.
+
+### The owner's proof
+
+```bash
+npm run prove -w @olai/agent
+```
+
+This is the prove-it command. It runs seven steps against the real Binance Agentic Wallet and the real B402 Bazaar, no MCP connection required, and prints one `PASS`, `FAIL` or `SKIP` line per step. Only step 4 can spend real money, and only when `.env` sets `OLAI_DRY_RUN=false` and `OLAI_PROVE_SPEND=yes`; every other step is read only.
+
+Step 1 reads a signed-in Binance Agentic Wallet, which means the `baw` CLI installed globally, a sign-in approved from the Binance mobile app, and the wallet funded on BNB Smart Chain. On a machine without that, step 1 prints `FAIL 1. could not read the wallet` and step 3 fails behind it. That is the wallet missing, not the repository being broken: the two tiers above need none of it.
+
+Expected shape of the output:
+
+```text
+PASS 1. wallet CONNECTED, x402 daily limit $..., quota left $...
+PASS 2. Bazaar has N wallet payable listings for "wallet balance" under $0.05, cheapest $... at ...
+PASS 3. a real 402 previewed to payment ... with N options, top option is READY_TO_SIGN for $... in ... on chain ...
+SKIP 4. OLAI_DRY_RUN is true, so Olai will not sign anything
+PASS 5. ... priced BNBUSDT at ...
+PASS 6. the ledger hash chain holds across all N lines
+PASS 7. this run spent $0.0000 across 0 settled payments (0 signatures claimed)
+Every step that ran, passed.
+```
+
+Actual output from a live run:
+
+```text
 Olai: LIVE, exchange binance-spot-testnet, cap $0.0500 a call, $1.0000 a day
 
 PASS 1. wallet CONNECTED, x402 daily limit $20, quota left $20
@@ -287,10 +317,9 @@ PASS 7. this run spent $0.0000 across 0 settled payments (1 signatures claimed)
 Every step that ran, passed.
 ```
 
-Run on 2026-09-06 with `OLAI_DRY_RUN=false OLAI_PROVE_SPEND=yes`. The receipt for that settlement, read from a BNB Smart Chain node: status success, block 120274603, 0.0100 USDT from the Agentic Wallet `0xC75126992E4744a75665405e9b427710C0d23052` to Nansen at `0x93053f1e7A5eFEDa532Fe69CbbE43cBEc3A0F13f` through Binance's Permit2 spender, gas paid by Binance's signer. Step 7 in that run counted settled lines only; since the code review the daily spend counts at signature time, so the same run today reports $0.0100 spent. A second run through the corrected path paid another cent, settlement `0x6962ad36ff991759c5801254aefaba68f8041a401f5a57b022a66976750f4335` (block 120285949, verified from a BNB Smart Chain node), and that run's step 7 reads `PASS 7. this run spent $0.0100 across 1 settled payments (1 signatures claimed)`.
+Run on 2026-09-06 with `OLAI_DRY_RUN=false OLAI_PROVE_SPEND=yes`. The receipt for that settlement, read from a BNB Smart Chain node: status success, block 120274603, 0.0100 real USDT from the Agentic Wallet `0xC75126992E4744a75665405e9b427710C0d23052` to Nansen at `0x93053f1e7A5eFEDa532Fe69CbbE43cBEc3A0F13f` through Binance's Permit2 spender, gas paid by Binance's signer. Step 7 in that run counted settled lines only; since the code review the daily spend counts at signature time, so the same run today reports $0.0100 spent. A second run through the corrected path paid another cent of real USDT, settlement `0x6962ad36ff991759c5801254aefaba68f8041a401f5a57b022a66976750f4335` (block 120285949, verified from a BNB Smart Chain node), and that run's step 7 reads `PASS 7. this run spent $0.0100 across 1 settled payments (1 signatures claimed)`.
 
-The full loop has also run live against the Binance spot testnet: a question through the owner API, a one-cent Nansen purchase inside the session (settlement `0xb495d3c91ebff850ce01e19dc8826e8adf433028b3516f48a8ad04b1522ce9bb`), a proposal to buy $15.00 of ETH with a limit at 2502.40, the rulebook's verdict (allowed, approval required), the owner's approval from the desk, and testnet order `9117738` filled for 0.0059 ETH at 2500.01. Those lines are the captured ledger sequence the landing page plays back, exported from the real ledger into `packages/web/public/ledger-sample.json`.
-   ```
+The full loop has also run end to end: a question through the owner API, a one-cent Nansen purchase inside the session paid in real USDT on BNB Smart Chain (settlement `0xb495d3c91ebff850ce01e19dc8826e8adf433028b3516f48a8ad04b1522ce9bb`), a proposal to buy $15.00 of ETH with a limit at 2502.40, the rulebook's verdict (allowed, approval required), the owner's approval from the desk, and order `9117738` filled for 0.0059 ETH at 2500.01 on the Binance spot testnet. The payments in that run were real money on a real chain and the order was on the testnet; both halves are true and they are not the same thing. Those lines are the captured ledger sequence the landing page plays back, exported from the real ledger into `packages/web/public/ledger-sample.json`.
 
 ## Quick start
 
@@ -345,14 +374,12 @@ The five OAuth routes that get a human through the Binance consent screen (`/oau
 
 Test output from a full run:
 
-```
 ```text
 Test Files  26 passed (26)
-Tests  203 passed | 1 skipped (204)
+Tests  212 passed | 1 skipped (213)
 ```
 
 Run on 2026-09-06 after the code review fixes. The one skipped test loads the live MCP tool list when `reference/mcp-tools.json` exists, and that file cannot exist until Binance admits third-party agents.
-```
 
 What each test folder under `packages/agent/test` covers:
 

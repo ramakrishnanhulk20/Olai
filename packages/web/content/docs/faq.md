@@ -1,7 +1,7 @@
 ---
 title: FAQ
 sidebar_position: 7
-description: Eight questions worth asking about an agent that spends money, answered from the code.
+description: Nine questions worth asking about an agent that spends money, answered from the code.
 ---
 
 # FAQ
@@ -115,18 +115,29 @@ The ledger makes the whole thing checkable afterwards: what was bought, what it 
 settlement hash paid for it, which rulebook was in force, who approved, and what filled. That is
 the difference between a demo of an agent trading and a record a desk could show someone.
 
+## Why are the orders so small, on a testnet account that holds so much?
+
+Because the two halves of the loop were proven at different levels of risk on purpose. The
+money that actually moved was real: three one-cent x402 payments left the owner's Binance
+Agentic Wallet, settled on BNB Smart Chain, and their hashes are in the README and the ledger.
+The trading half ran on the Binance spot testnet, which comes pre-funded with virtual balances
+far larger than any real sub-account, so a $15 order there looks tiny next to the account. That
+is the point: the rulebook, the approval flow and the ledger were attacked and rehearsed against
+an exchange where a mistake costs nothing, while the payment path was proven with real money
+because a fake payment proves nothing. A live sub-account only needs a trade-only key in `.env`
+and the same rulebook, sized to the balance you give it (the shipped defaults assume $50 to $100).
+
 ## What's still missing?
 
 The owner's desk ships at `/app` (`packages/web/src/app/app/page.tsx`, components under
 `packages/web/src/components/desk`): the rulebook editor, the ask box, the thinking stream,
-approve and reject, the ledger with its filter chips and verify button, and the kill switch, all
-against the same owner API the rest of this site describes.
+approve and reject, a picker for stepping back through past sessions, the ledger with its filter
+chips and verify button, and the kill switch, all against the same owner API the rest of this site
+describes.
 
-Four things are still missing. The desk has no picker for switching between past sessions: it
-always jumps to the newest one, so reaching an older pending proposal takes
-`GET /api/sessions/:id` and curl rather than a click. The account panel lists every open position
-as a plain scrollable list rather than a sorted "top holdings" summary, so an account with many
-open positions is harder to scan than it should be. On Windows, the Binance token file is written
+Three things are still missing. The account panel lists every open position as a plain scrollable
+list rather than a sorted "top holdings" summary, so an account with many open positions is harder
+to scan than it should be. On Windows, the Binance token file is written
 with mode 0600, but NTFS ignores POSIX bits, so any process running as the same user can read it;
 locking it down with NTFS ACLs has not been done. And the Binance MCP door stays closed by
 Binance's own allowlist (see above), so the coded and tested MCP client sits unused.

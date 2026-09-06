@@ -202,7 +202,7 @@ export function offline(): OlaiError {
   return new OlaiError(
     0,
     `The service is not answering at ${where()}.`,
-    "Start it with npm run dev -w @olai/agent, then try again.",
+    "Start it with npm run dev -w @olai/agent, and check that OLAI_WEB_ORIGIN in its .env matches this page's origin.",
   );
 }
 

@@ -8,12 +8,16 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
  *
  * Stopping asks first, because it refuses every order and every payment until
  * the owner comes back. Resuming does not: undoing a stop is the safe direction.
+ *
+ * A note in place of the running word means the switch is not this visitor's to
+ * throw, so the word Running is never printed next to a switch nobody can use.
  */
 export function KillSwitch({
   killed,
   busy,
   disabled,
   problem,
+  note = null,
   onKill,
   onResume,
 }: {
@@ -21,6 +25,7 @@ export function KillSwitch({
   busy: boolean;
   disabled: boolean;
   problem: string | null;
+  note?: string | null;
   onKill: () => void;
   onResume: () => void;
 }) {
@@ -40,8 +45,12 @@ export function KillSwitch({
 
   return (
     <div className="relative flex items-center gap-3">
-      <span className="hidden font-mono text-[0.66rem] uppercase tracking-[0.18em] text-ink/45 sm:block">
-        {killed ? "Stopped" : "Running"}
+      <span
+        className={`hidden font-mono text-[0.66rem] uppercase tracking-[0.18em] sm:block ${
+          note ? "max-w-[11rem] text-right leading-[1.5] text-ink/35" : "text-ink/45"
+        }`}
+      >
+        {note ?? (killed ? "Stopped" : "Running")}
       </span>
 
       <button
@@ -50,8 +59,8 @@ export function KillSwitch({
         disabled={busy || disabled}
         role="switch"
         aria-checked={!killed}
-        aria-label={killed ? "Resume Olai" : "Stop Olai"}
-        title={killed ? "Resume Olai" : "Stop Olai"}
+        aria-label={note ?? (killed ? "Resume Olai" : "Stop Olai")}
+        title={note ?? (killed ? "Resume Olai" : "Stop Olai")}
         className={`desk-toggle ${killed ? "is-off" : "is-on"} ${busy ? "is-busy" : ""}`}
       >
         <motion.span

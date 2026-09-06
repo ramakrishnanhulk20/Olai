@@ -74,11 +74,15 @@ function loadEnv(): void {
   }
 }
 
+/** Both wallet failures end the same way, so the fix is one sentence in one place. */
+const WALLET_NEXT_STEP =
+  'Install the Binance Agentic Wallet skill and sign in (npm install -g @binance/agentic-wallet, then baw auth signin). Steps 2 and 5 to 7 do not need it.';
+
 async function proveWallet(baw: Baw): Promise<void> {
   try {
     const status = await baw.walletStatus();
     if (status !== 'CONNECTED') {
-      fail(1, `the Binance Agentic Wallet says ${status}. Run "baw login" and try again.`);
+      fail(1, `the Binance Agentic Wallet says ${status}. ${WALLET_NEXT_STEP}`);
       return;
     }
 
@@ -88,7 +92,7 @@ async function proveWallet(baw: Baw): Promise<void> {
       `wallet CONNECTED, x402 daily limit $${settings.x402DailyLimit}, quota left $${settings.x402QuotaLeft}`,
     );
   } catch (error) {
-    fail(1, `could not read the wallet: ${say(error)}`);
+    fail(1, `could not read the wallet: ${say(error)}. ${WALLET_NEXT_STEP}`);
   }
 }
 

@@ -58,6 +58,13 @@ The rest have working defaults and are documented in `.env.example`:
 
 Leave `OLAI_DRY_RUN=true` until you have read [Dry run versus live](../guides/dry-run-versus-live.md).
 
+> **You can stop here.** With those two keys and the free testnet key from the next step, everything
+> except the money already works: the desk at `/app`, a whole question answered end to end in a dry
+> run against real Binance spot testnet prices, the rulebook enforced in code, the ledger and its
+> hash chain, and these docs. Run `npm run dry-run -w @olai/agent` now and read what it prints.
+> Sections 5 onwards are what it takes to buy data with a real cent and place a real order: they
+> need the Agentic Wallet, the Binance mobile app for a sign-in, and two separate fundings.
+
 ## 3. Get a Binance API key (the exchange door)
 
 This is the door Olai actually trades through. Sign in at

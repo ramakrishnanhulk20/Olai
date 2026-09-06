@@ -32,6 +32,7 @@ export function SessionPicker({
   currentId,
   loading,
   arrival,
+  replay = false,
   onPick,
   onDismiss,
 }: {
@@ -39,8 +40,9 @@ export function SessionPicker({
   currentId: string | null;
   loading: boolean;
   arrival: Arrival | null;
-  onPick: (id: string) => void;
-  onDismiss: () => void;
+  replay?: boolean;
+  onPick?: (id: string) => void;
+  onDismiss?: () => void;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
 
@@ -49,7 +51,11 @@ export function SessionPicker({
       <header className="flex items-baseline justify-between gap-4">
         <h2 className="desk-heading">Sessions</h2>
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/30">
-          {sessions.length === 0 ? "None yet" : `${sessions.length} on the service`}
+          {replay
+            ? "One recorded session"
+            : sessions.length === 0
+              ? "None yet"
+              : `${sessions.length} on the service`}
         </span>
       </header>
 
@@ -80,7 +86,7 @@ export function SessionPicker({
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   whileHover={shouldReduce ? undefined : { x: picked ? 0 : 2 }}
-                  onClick={() => onPick(session.id)}
+                  onClick={() => onPick?.(session.id)}
                   aria-current={picked}
                   aria-label={`${session.question}, ${tone.label}`}
                   className={`desk-session ${picked ? "is-picked" : ""}`}
@@ -123,7 +129,7 @@ export function SessionPicker({
             {arrival.switched ? null : (
               <button
                 type="button"
-                onClick={() => onPick(arrival.id)}
+                onClick={() => onPick?.(arrival.id)}
                 className="desk-filter shrink-0"
               >
                 Open it
@@ -131,7 +137,7 @@ export function SessionPicker({
             )}
             <button
               type="button"
-              onClick={onDismiss}
+              onClick={() => onDismiss?.()}
               className="desk-filter shrink-0"
               aria-label="Dismiss the new proposal notice"
             >

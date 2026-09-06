@@ -14,12 +14,14 @@ export function AskBox({
   running,
   disabled,
   disabledReason,
+  placeholder = "Should I trim my BNB position?",
   problem,
   onAsk,
 }: {
   running: boolean;
   disabled: boolean;
   disabledReason: string | null;
+  placeholder?: string;
   problem: { message: string; nextStep: string } | null;
   onAsk: (question: string) => void;
 }) {
@@ -71,7 +73,7 @@ export function AskBox({
           rows={3}
           maxLength={2000}
           disabled={running || disabled}
-          placeholder="Should I trim my BNB position?"
+          placeholder={placeholder}
           aria-label="Your question for Olai"
           className="desk-input mt-3 min-h-[6.5rem] w-full resize-y font-body text-[1.05rem] leading-[1.5]"
         />
@@ -107,6 +109,10 @@ export function AskBox({
               <p className="mt-3 text-[0.88rem] leading-[1.45] text-ink/60">
                 Olai is reading the market and shopping for data, this can take a minute.
                 <span className="ml-2 font-mono text-[0.78rem] text-ink/40">{seconds}s</span>
+              </p>
+              <p className="mt-1.5 text-[0.82rem] leading-[1.45] text-ink/45">
+                Paid data comes out of the wallet&apos;s daily limit and the rulebook&apos;s data
+                budget.
               </p>
             </motion.div>
           ) : null}

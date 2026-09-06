@@ -4,6 +4,8 @@
  *
  * It runs in dry run, so it stops before any signature and no money can move. The
  * only wallet commands it uses are read only: status, settings, and x402 preview.
+ * The wallet is optional: with no `baw` on the PATH the Bazaar and the merchants'
+ * 402s still run, which is what makes this the one proof that needs no key at all.
  *
  * Run it with: npm run probe:bazaar -w @olai/agent
  */
@@ -24,6 +26,8 @@ const BAZAAR_BASE_URL =
 
 const MAX_USD_PER_CALL = 0.05;
 
+const WALLET_SKIPPED = 'wallet CLI not found or signed out, skipping the wallet preview';
+
 function line(text = ''): void {
   process.stdout.write(`${text}\n`);
 }
@@ -41,7 +45,30 @@ function printResources(title: string, resources: BazaarResource[]): void {
   }
 }
 
-async function showLivePreview(baw: Baw, label: string, req: BuyRequest): Promise<void> {
+/**
+ * The Bazaar and the merchants' 402s are the point of this probe and neither
+ * needs a wallet, so a machine with no `baw` on its PATH still gets the whole
+ * live catalogue and the real payment demands. Only the preview is lost.
+ */
+async function readWallet(baw: Baw): Promise<boolean> {
+  try {
+    const status = await baw.walletStatus();
+    if (status !== 'CONNECTED') {
+      line(WALLET_SKIPPED);
+      return false;
+    }
+
+    const settings = await baw.walletSettings();
+    line(`wallet ${status}, x402 quota left ${settings.x402QuotaLeft} of ${settings.x402DailyLimit}`);
+    line(`balance entries: ${(await baw.walletBalance()).length}`);
+    return true;
+  } catch {
+    line(WALLET_SKIPPED);
+    return false;
+  }
+}
+
+async function showLivePreview(baw: Baw | null, label: string, req: BuyRequest): Promise<void> {
   const method = req.method ?? 'GET';
   const response = await fetch(req.url, {
     method,
@@ -66,6 +93,11 @@ async function showLivePreview(baw: Baw, label: string, req: BuyRequest): Promis
   line(
     `  x402 version ${paymentRequired.x402Version}, ${paymentRequired.accepts.length} payment options offered`,
   );
+
+  if (!baw) {
+    line('  no wallet on this machine, so nothing to price this against');
+    return;
+  }
 
   const preview = await baw.x402Preview(paymentRequired);
   line(`  wallet preview ${preview.paymentId}, ${preview.options.length} options ranked`);
@@ -100,10 +132,7 @@ async function main(): Promise<void> {
   const bazaar = new BazaarClient({ baseUrl: BAZAAR_BASE_URL });
   const baw = new Baw();
 
-  const status = await baw.walletStatus();
-  const settings = await baw.walletSettings();
-  line(`wallet ${status}, x402 quota left ${settings.x402QuotaLeft} of ${settings.x402DailyLimit}`);
-  line(`balance entries: ${(await baw.walletBalance()).length}`);
+  const walletReady = await readWallet(baw);
   line();
 
   const catalog = await bazaar.list({ limit: 3 });
@@ -128,22 +157,36 @@ async function main(): Promise<void> {
   ];
 
   for (const [label, req] of targets) {
-    await showLivePreview(baw, label, req);
-    const outcome = await buy(req, {
-      dryRun: true,
-      maxUsdPerCall: MAX_USD_PER_CALL,
-      baw,
-      // This probe never reaches a signature, but the buyer asks for the guard
-      // whatever the mode, and a probe has no ledger of its own to write to.
-      ...memorySignatureGuard(),
-    });
-    line(`  buy(dryRun): ${describeOutcome(outcome)}`);
+    await showLivePreview(walletReady ? baw : null, label, req);
+
+    if (walletReady) {
+      const outcome = await buy(req, {
+        dryRun: true,
+        maxUsdPerCall: MAX_USD_PER_CALL,
+        baw,
+        // This probe never reaches a signature, but the buyer asks for the guard
+        // whatever the mode, and a probe has no ledger of its own to write to.
+        ...memorySignatureGuard(),
+      });
+      line(`  buy(dryRun): ${describeOutcome(outcome)}`);
+    } else {
+      line('  buy(dryRun): skipped, there is no wallet to price the payment with');
+    }
+
     line();
   }
 
   line('Nothing was signed. No money moved.');
+
+  if (!walletReady) {
+    line(
+      'Everything above came from the live Bazaar and from the merchants themselves. To add the wallet leg, run npm install -g @binance/agentic-wallet, then baw auth signin.',
+    );
+    return;
+  }
+
   line(
-    'An empty wallet makes every option ACTION_REQUIRED with INSUFFICIENT_BALANCE, which is the expected live result today.',
+    'A funded wallet ranks USDT on BSC first and marks it READY_TO_SIGN; an empty one makes every option ACTION_REQUIRED with INSUFFICIENT_BALANCE.',
   );
 }
 

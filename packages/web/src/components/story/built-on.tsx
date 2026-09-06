@@ -5,7 +5,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 const tiles: Array<{ name: string; line: string; span: string; held?: boolean }> = [
   {
     name: "Agentic Wallet",
-    line: "Olai previews the price and signs each payment through the wallet CLI, under the wallet's own daily limit.",
+    line: "Olai previews the price and signs each payment through the wallet CLI, under the wallet's own daily limit, two real cents settled on BNB Smart Chain.",
     span: "md:col-span-4",
   },
   {
@@ -15,7 +15,7 @@ const tiles: Array<{ name: string; line: string; span: string; held?: boolean }>
   },
   {
     name: "The exchange API on an isolated sub-account",
-    line: "Ticker, book, candles, balances and spot orders, on a trade-only key with no withdrawal permission.",
+    line: "Ticker, book, candles, balances and spot orders, with no withdrawal permission, proven on the spot testnet; a live sub-account needs a trade-only key.",
     span: "md:col-span-3",
   },
   {

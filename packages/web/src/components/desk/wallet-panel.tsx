@@ -9,15 +9,18 @@ import { usd } from "@/lib/format";
  *
  * Olai holds no keys. Everything here is read from the wallet itself, so an
  * unconnected wallet says so rather than showing zeros that look like a balance.
+ * A replay has no wallet to read, so it names what would be here instead.
  */
 export function WalletPanel({
   token,
   onUnauthorized,
   refreshKey,
+  replay,
 }: {
-  token: string;
-  onUnauthorized: () => void;
-  refreshKey: number;
+  token?: string;
+  onUnauthorized?: () => void;
+  refreshKey?: number;
+  replay?: string;
 }) {
   const [wallet, setWallet] = useState<WalletState | null>(null);
   const [problem, setProblem] = useState<{ message: string; nextStep: string } | null>(null);
@@ -25,7 +28,7 @@ export function WalletPanel({
 
   const load = useCallback(
     (signal?: AbortSignal) =>
-      getWallet(token, signal)
+      getWallet(token ?? "", signal)
         .then((state) => {
           setWallet(state);
           setProblem(null);
@@ -36,7 +39,7 @@ export function WalletPanel({
             return;
           }
           if (error instanceof OlaiError && error.unauthorized) {
-            onUnauthorized();
+            onUnauthorized?.();
             return;
           }
           const failure = say(error);
@@ -47,10 +50,27 @@ export function WalletPanel({
   );
 
   useEffect(() => {
+    if (replay) {
+      return;
+    }
     const controller = new AbortController();
     void load(controller.signal);
     return () => controller.abort();
-  }, [load, refreshKey]);
+  }, [load, refreshKey, replay]);
+
+  if (replay) {
+    return (
+      <section className="desk-panel p-6">
+        <header className="flex items-baseline justify-between gap-4">
+          <h2 className="desk-heading">Wallet</h2>
+          <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
+            Not shown in replay
+          </span>
+        </header>
+        <p className="mt-5 text-[0.88rem] leading-[1.5] text-ink/55">{replay}</p>
+      </section>
+    );
+  }
 
   const settings = wallet?.settings ?? null;
   const spent = settings ? Math.max(0, settings.x402DailyLimit - settings.x402QuotaLeft) : 0;

@@ -115,6 +115,14 @@ export function KillSwitch() {
             One click refuses every order and every payment until the owner resumes, mirrored by
             Binance&rsquo;s own emergency stop on the sub-account.
           </motion.p>
+
+          <motion.p
+            variants={enter}
+            className="mt-[clamp(0.75rem,2vh,1.25rem)] max-w-[52ch] font-body text-[1.0625rem] leading-[1.65] text-ink/70 md:text-[1.125rem]"
+          >
+            It refuses everything that comes after the click; an order already sent to the exchange
+            is not recalled.
+          </motion.p>
         </motion.div>
       </div>
     </section>

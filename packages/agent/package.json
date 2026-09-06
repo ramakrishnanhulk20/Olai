@@ -18,7 +18,8 @@
     "probe:exchange": "tsx scripts/probe-exchange.ts",
     "dry-run": "tsx scripts/dry-run.ts",
     "prove": "tsx scripts/prove.ts",
-    "attacks": "tsx attacks/run.ts"
+    "attacks": "tsx attacks/run.ts",
+    "desk-harness": "tsx scripts/desk-harness.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.124.0",

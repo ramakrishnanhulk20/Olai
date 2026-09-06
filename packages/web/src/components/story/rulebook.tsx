@@ -7,20 +7,24 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
  * These are the limits a fresh install runs under, so they are product defaults rather
  * than a sample: change them there and change them here.
  */
-const clauses: Array<{ field: string; value: string }> = [
-  { field: "Max order", value: "$20.00" },
-  { field: "Max daily loss", value: "$10.00" },
-  { field: "Max position per market", value: "$50.00" },
-  { field: "Allowed markets", value: "BNBUSDT, BTCUSDT, ETHUSDT" },
-  { field: "Short selling", value: "not allowed" },
+const clauses: Array<{ field: string; value: string; note?: string }> = [
+  { field: "Biggest single order", value: "$20.00" },
+  {
+    field: "Most it may lose in a day",
+    value: "$10.00",
+    note: "Daily loss counts price moves as well as fills.",
+  },
+  { field: "Most held in one market", value: "$50.00" },
+  { field: "Markets it may trade", value: "BNBUSDT, BTCUSDT, ETHUSDT" },
+  { field: "May sell what it does not hold", value: "no" },
   { field: "Leverage", value: "not allowed" },
-  { field: "Data budget per day", value: "$1.00" },
-  { field: "Data budget per call", value: "$0.05" },
-  { field: "Cooldown between orders", value: "60 seconds" },
-  { field: "Approval required above", value: "$0.00, so every order" },
+  { field: "Data budget for a day", value: "$1.00" },
+  { field: "Most for one data call", value: "$0.05" },
+  { field: "Wait between orders, in seconds", value: "60" },
+  { field: "Ask the owner above", value: "$0.00, so every order" },
   { field: "One side per market", value: "yes" },
-  { field: "Drawdown, first tier", value: "down $5.00, halve the size" },
-  { field: "Drawdown, second tier", value: "down $10.00, halt trading" },
+  { field: "Cut back after losing", value: "$5.00, halve the size" },
+  { field: "Cut back after losing", value: "$10.00, stop trading" },
 ];
 
 const rise: Variants = {
@@ -97,17 +101,24 @@ export function RulebookSheet() {
           <dl className="mt-[clamp(0.5rem,1.5vh,1rem)]">
             {clauses.map((clause) => (
               <motion.div
-                key={clause.field}
+                key={`${clause.field} ${clause.value}`}
                 variants={enter}
-                className="group flex flex-wrap items-baseline gap-x-3 border-b border-ink/[0.06] py-[clamp(0.5rem,1.2vh,0.8rem)] transition-colors duration-300 last:border-b-0 hover:border-amber/40"
+                className="group border-b border-ink/[0.06] py-[clamp(0.5rem,1.2vh,0.8rem)] transition-colors duration-300 last:border-b-0 hover:border-amber/40"
               >
-                <dt className="font-body text-[0.95rem] text-ink/60 transition-colors duration-300 group-hover:text-ink">
-                  {clause.field}
-                </dt>
-                <span className="h-px min-w-6 flex-1 self-center bg-ink/12" aria-hidden />
-                <dd className="font-mono text-[0.85rem] text-ink transition-colors duration-300 group-hover:text-amber">
-                  {clause.value}
-                </dd>
+                <div className="flex flex-wrap items-baseline gap-x-3">
+                  <dt className="font-body text-[0.95rem] text-ink/60 transition-colors duration-300 group-hover:text-ink">
+                    {clause.field}
+                  </dt>
+                  <span className="h-px min-w-6 flex-1 self-center bg-ink/12" aria-hidden />
+                  <dd className="font-mono text-[0.85rem] text-ink transition-colors duration-300 group-hover:text-amber">
+                    {clause.value}
+                  </dd>
+                </div>
+                {clause.note ? (
+                  <dd className="mt-1.5 max-w-[44ch] font-body text-[0.8rem] leading-[1.5] text-ink/40">
+                    {clause.note}
+                  </dd>
+                ) : null}
               </motion.div>
             ))}
           </dl>

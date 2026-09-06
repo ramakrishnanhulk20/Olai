@@ -11,6 +11,9 @@ import { OlaiError, getRulebook, putRulebook, say, type ApiIssue, type Rulebook 
  * hands back the field it refused, which is what the messages under each input
  * are. The placeholders are the starter rulebook the agent ships with, so an
  * empty box still says what a sensible number looks like.
+ *
+ * In replay the panel is handed the shipped defaults and the whole form is
+ * disabled, because there is nothing on the other end to save to.
  */
 
 const STARTER = {
@@ -118,12 +121,18 @@ function issuesByField(issues: ApiIssue[]): Map<string, string> {
 export function RulebookPanel({
   token,
   onUnauthorized,
+  replay,
+  note,
 }: {
-  token: string;
-  onUnauthorized: () => void;
+  token?: string;
+  onUnauthorized?: () => void;
+  replay?: Rulebook;
+  note?: string;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
-  const [form, setForm] = useState<Form | null>(null);
+  // A replay already has its rulebook in hand, so the form starts filled rather
+  // than waiting on a call it is never going to make.
+  const [form, setForm] = useState<Form | null>(replay ? toForm(replay) : null);
   const [loadProblem, setLoadProblem] = useState<{ message: string; nextStep: string } | null>(null);
   const [saving, setSaving] = useState(false);
   const [savedAt, setSavedAt] = useState<number | null>(null);
@@ -135,7 +144,7 @@ export function RulebookPanel({
 
   const load = useCallback(
     (signal?: AbortSignal) =>
-      getRulebook(token, signal)
+      getRulebook(token ?? "", signal)
         .then((book) => {
           setForm(toForm(book));
           setLoadProblem(null);
@@ -145,7 +154,7 @@ export function RulebookPanel({
             return;
           }
           if (error instanceof OlaiError && error.unauthorized) {
-            onUnauthorized();
+            onUnauthorized?.();
             return;
           }
           const problem = say(error);
@@ -155,10 +164,13 @@ export function RulebookPanel({
   );
 
   useEffect(() => {
+    if (replay) {
+      return;
+    }
     const controller = new AbortController();
     void load(controller.signal);
     return () => controller.abort();
-  }, [load]);
+  }, [load, replay]);
 
   const set = <K extends keyof Form>(key: K, value: Form[K]) => {
     setForm((current) => (current ? { ...current, [key]: value } : current));
@@ -184,11 +196,11 @@ export function RulebookPanel({
     setSaveProblem(null);
     setIssues([]);
     try {
-      setForm(toForm(await putRulebook(token, toRulebook(form))));
+      setForm(toForm(await putRulebook(token ?? "", toRulebook(form))));
       setSavedAt(Date.now());
     } catch (error) {
       if (error instanceof OlaiError && error.unauthorized) {
-        onUnauthorized();
+        onUnauthorized?.();
         return;
       }
       const problem = say(error);
@@ -204,9 +216,15 @@ export function RulebookPanel({
       <header className="flex items-baseline justify-between gap-4">
         <h2 className="desk-heading">Rulebook</h2>
         <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
-          Checked in code
+          {replay ? "Shipped defaults" : "Checked in code"}
         </span>
       </header>
+
+      {replay ? (
+        <p className="mt-4 text-[0.85rem] leading-[1.5] text-ink/55">
+          The rulebook a fresh install runs under, not a reading of the recorded run.
+        </p>
+      ) : null}
 
       {loadProblem ? (
         <div className="mt-5">
@@ -223,253 +241,260 @@ export function RulebookPanel({
           ))}
         </div>
       ) : (
-        <div className="mt-6 flex flex-col gap-5">
-          <Field label="What this rulebook is called" issue={fieldIssues.get("name")}>
-            <input
-              className="desk-input"
-              value={form.name}
-              placeholder={STARTER.name}
-              onChange={(event) => set("name", event.target.value)}
-            />
-          </Field>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Money
-              label="Biggest single order"
-              value={form.maxOrderUsd}
-              placeholder={STARTER.maxOrderUsd}
-              issue={fieldIssues.get("maxOrderUsd")}
-              onChange={(value) => set("maxOrderUsd", value)}
-            />
-            <Money
-              label="Most it may lose in a day"
-              value={form.maxDailyLossUsd}
-              placeholder={STARTER.maxDailyLossUsd}
-              issue={fieldIssues.get("maxDailyLossUsd")}
-              onChange={(value) => set("maxDailyLossUsd", value)}
-            />
-            <Money
-              label="Most held in one market"
-              value={form.maxPositionUsdPerSymbol}
-              placeholder={STARTER.maxPositionUsdPerSymbol}
-              issue={fieldIssues.get("maxPositionUsdPerSymbol")}
-              onChange={(value) => set("maxPositionUsdPerSymbol", value)}
-            />
-            <Money
-              label="Ask me above"
-              value={form.requireApprovalAboveUsd}
-              placeholder={STARTER.requireApprovalAboveUsd}
-              issue={fieldIssues.get("requireApprovalAboveUsd")}
-              onChange={(value) => set("requireApprovalAboveUsd", value)}
-            />
-            <Money
-              label="Data budget for a day"
-              value={form.maxDataSpendUsdPerDay}
-              placeholder={STARTER.maxDataSpendUsdPerDay}
-              issue={fieldIssues.get("maxDataSpendUsdPerDay")}
-              onChange={(value) => set("maxDataSpendUsdPerDay", value)}
-            />
-            <Money
-              label="Most for one data call"
-              value={form.maxDataSpendUsdPerCall}
-              placeholder={STARTER.maxDataSpendUsdPerCall}
-              issue={fieldIssues.get("maxDataSpendUsdPerCall")}
-              onChange={(value) => set("maxDataSpendUsdPerCall", value)}
-            />
-          </div>
-
-          <Field
-            label="Wait between orders, in seconds"
-            issue={fieldIssues.get("cooldownSecondsBetweenOrders")}
-          >
-            <input
-              className="desk-input"
-              inputMode="numeric"
-              value={form.cooldownSecondsBetweenOrders}
-              placeholder={STARTER.cooldownSecondsBetweenOrders}
-              onChange={(event) => set("cooldownSecondsBetweenOrders", event.target.value)}
-            />
-          </Field>
-
-          <Field label="Markets it may trade" issue={fieldIssues.get("allowedSymbols")}>
-            <div className="flex flex-wrap items-center gap-2">
-              {form.allowedSymbols.map((symbol) => (
-                <span key={symbol} className="desk-chip">
-                  {symbol}
-                  <button
-                    type="button"
-                    aria-label={`Remove ${symbol}`}
-                    onClick={() =>
-                      set(
-                        "allowedSymbols",
-                        form.allowedSymbols.filter((entry) => entry !== symbol),
-                      )
-                    }
-                    className="ml-2 text-ink/45 transition-colors duration-200 hover:text-bad"
-                  >
-                    ×
-                  </button>
-                </span>
-              ))}
+        <fieldset disabled={replay !== undefined} className="m-0 min-w-0 border-0 p-0">
+          <div className="mt-6 flex flex-col gap-5">
+            <Field label="What this rulebook is called" issue={fieldIssues.get("name")}>
               <input
-                className="desk-input w-[9rem] py-2 font-mono text-[0.8rem] uppercase"
-                value={symbolDraft}
-                placeholder="BNBUSDT"
-                aria-label="Add a market"
-                onChange={(event) => setSymbolDraft(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === ",") {
-                    event.preventDefault();
-                    addSymbol();
-                  }
-                }}
-                onBlur={addSymbol}
+                className="desk-input"
+                value={form.name}
+                placeholder={STARTER.name}
+                onChange={(event) => set("name", event.target.value)}
+              />
+            </Field>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Money
+                label="Biggest single order"
+                value={form.maxOrderUsd}
+                placeholder={STARTER.maxOrderUsd}
+                issue={fieldIssues.get("maxOrderUsd")}
+                onChange={(value) => set("maxOrderUsd", value)}
+              />
+              <Money
+                label="Most it may lose in a day"
+                value={form.maxDailyLossUsd}
+                placeholder={STARTER.maxDailyLossUsd}
+                issue={fieldIssues.get("maxDailyLossUsd")}
+                onChange={(value) => set("maxDailyLossUsd", value)}
+              />
+              <Money
+                label="Most held in one market"
+                value={form.maxPositionUsdPerSymbol}
+                placeholder={STARTER.maxPositionUsdPerSymbol}
+                issue={fieldIssues.get("maxPositionUsdPerSymbol")}
+                onChange={(value) => set("maxPositionUsdPerSymbol", value)}
+              />
+              <Money
+                label="Ask me above"
+                value={form.requireApprovalAboveUsd}
+                placeholder={STARTER.requireApprovalAboveUsd}
+                issue={fieldIssues.get("requireApprovalAboveUsd")}
+                onChange={(value) => set("requireApprovalAboveUsd", value)}
+              />
+              <Money
+                label="Data budget for a day"
+                value={form.maxDataSpendUsdPerDay}
+                placeholder={STARTER.maxDataSpendUsdPerDay}
+                issue={fieldIssues.get("maxDataSpendUsdPerDay")}
+                onChange={(value) => set("maxDataSpendUsdPerDay", value)}
+              />
+              <Money
+                label="Most for one data call"
+                value={form.maxDataSpendUsdPerCall}
+                placeholder={STARTER.maxDataSpendUsdPerCall}
+                issue={fieldIssues.get("maxDataSpendUsdPerCall")}
+                onChange={(value) => set("maxDataSpendUsdPerCall", value)}
               />
             </div>
-          </Field>
 
-          <div className="flex flex-col gap-3">
-            <Switch
-              label="May sell what it does not hold"
-              checked={form.allowShort}
-              onChange={(value) => set("allowShort", value)}
-            />
-            <Switch
-              label="Only trade between two hours, UTC"
-              checked={form.hours}
-              onChange={(value) => set("hours", value)}
-            />
-            {form.hours ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field label="From hour" issue={fieldIssues.get("tradingHoursUtc.start")}>
-                  <input
-                    className="desk-input"
-                    inputMode="numeric"
-                    value={form.hoursStart}
-                    onChange={(event) => set("hoursStart", event.target.value)}
-                  />
-                </Field>
-                <Field label="To hour" issue={fieldIssues.get("tradingHoursUtc.end")}>
-                  <input
-                    className="desk-input"
-                    inputMode="numeric"
-                    value={form.hoursEnd}
-                    onChange={(event) => set("hoursEnd", event.target.value)}
-                  />
-                </Field>
+            <Field
+              label="Wait between orders, in seconds"
+              issue={fieldIssues.get("cooldownSecondsBetweenOrders")}
+            >
+              <input
+                className="desk-input"
+                inputMode="numeric"
+                value={form.cooldownSecondsBetweenOrders}
+                placeholder={STARTER.cooldownSecondsBetweenOrders}
+                onChange={(event) => set("cooldownSecondsBetweenOrders", event.target.value)}
+              />
+            </Field>
+
+            <Field label="Markets it may trade" issue={fieldIssues.get("allowedSymbols")}>
+              <div className="flex flex-wrap items-center gap-2">
+                {form.allowedSymbols.map((symbol) => (
+                  <span key={symbol} className="desk-chip">
+                    {symbol}
+                    <button
+                      type="button"
+                      aria-label={`Remove ${symbol}`}
+                      onClick={() =>
+                        set(
+                          "allowedSymbols",
+                          form.allowedSymbols.filter((entry) => entry !== symbol),
+                        )
+                      }
+                      className="ml-2 text-ink/45 transition-colors duration-200 hover:text-bad"
+                    >
+                      ×
+                    </button>
+                  </span>
+                ))}
+                <input
+                  className="desk-input w-[9rem] py-2 font-mono text-[0.8rem] uppercase"
+                  value={symbolDraft}
+                  placeholder="BNBUSDT"
+                  aria-label="Add a market"
+                  onChange={(event) => setSymbolDraft(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === ",") {
+                      event.preventDefault();
+                      addSymbol();
+                    }
+                  }}
+                  onBlur={addSymbol}
+                />
+              </div>
+            </Field>
+
+            <div className="flex flex-col gap-3">
+              <Switch
+                label="May sell what it does not hold"
+                checked={form.allowShort}
+                onChange={(value) => set("allowShort", value)}
+              />
+              <Switch
+                label="Only trade between two hours, UTC"
+                checked={form.hours}
+                onChange={(value) => set("hours", value)}
+              />
+              {form.hours ? (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <Field label="From hour" issue={fieldIssues.get("tradingHoursUtc.start")}>
+                    <input
+                      className="desk-input"
+                      inputMode="numeric"
+                      value={form.hoursStart}
+                      onChange={(event) => set("hoursStart", event.target.value)}
+                    />
+                  </Field>
+                  <Field label="To hour" issue={fieldIssues.get("tradingHoursUtc.end")}>
+                    <input
+                      className="desk-input"
+                      inputMode="numeric"
+                      value={form.hoursEnd}
+                      onChange={(event) => set("hoursEnd", event.target.value)}
+                    />
+                  </Field>
+                </div>
+              ) : null}
+              {fieldIssues.get("tradingHoursUtc") ? (
+                <p className="text-[0.78rem] leading-[1.4] text-bad">
+                  {fieldIssues.get("tradingHoursUtc")}
+                </p>
+              ) : null}
+            </div>
+
+            <div>
+              <p className="desk-label">Cut back after losing</p>
+              <div className="mt-3 flex flex-col gap-2">
+                {form.drawdownTiers.map((tier, index) => (
+                  <div key={`tier-${index}`} className="flex items-center gap-2">
+                    <span className="font-mono text-[0.8rem] text-ink/40">$</span>
+                    <input
+                      className="desk-input flex-1 py-2 font-mono text-[0.82rem]"
+                      inputMode="decimal"
+                      value={tier.lossUsd}
+                      onChange={(event) => {
+                        const next = [...form.drawdownTiers];
+                        next[index] = { ...tier, lossUsd: event.target.value };
+                        set("drawdownTiers", next);
+                      }}
+                    />
+                    <select
+                      className="desk-input w-[7.5rem] py-2 text-[0.82rem]"
+                      value={tier.action}
+                      onChange={(event) => {
+                        const next = [...form.drawdownTiers];
+                        next[index] = { ...tier, action: event.target.value as Tier["action"] };
+                        set("drawdownTiers", next);
+                      }}
+                    >
+                      <option value="halve">halve size</option>
+                      <option value="halt">stop trading</option>
+                    </select>
+                    <button
+                      type="button"
+                      aria-label="Remove this tier"
+                      onClick={() =>
+                        set(
+                          "drawdownTiers",
+                          form.drawdownTiers.filter((_, position) => position !== index),
+                        )
+                      }
+                      className="px-2 text-ink/40 transition-colors duration-200 hover:text-bad"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+                {[...fieldIssues.entries()]
+                  .filter(([key]) => key.startsWith("drawdownTiers"))
+                  .map(([key, message]) => (
+                    <p key={key} className="text-[0.78rem] leading-[1.4] text-bad">
+                      {message}
+                    </p>
+                  ))}
+                <button
+                  type="button"
+                  onClick={() => set("drawdownTiers", [...form.drawdownTiers, { lossUsd: "0.00", action: "halve" }])}
+                  className="desk-button-quiet mt-1 w-fit px-4 py-2 text-[0.8rem]"
+                >
+                  Add a tier
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-control border border-ink/10 bg-ink/[0.02] p-4">
+              <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
+                Not yours to change
+              </p>
+              <p className="mt-2 text-[0.85rem] leading-[1.5] text-ink/55">
+                Leverage is off and one side per market is on. Olai is a spot agent, so these are
+                not settings, they are things it cannot do.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <motion.button
+                type="button"
+                onClick={() => void save()}
+                disabled={saving}
+                whileHover={shouldReduce || saving ? undefined : { scale: 1.02 }}
+                whileTap={shouldReduce || saving ? undefined : { scale: 0.99 }}
+                transition={{ type: "spring", stiffness: 420, damping: 28 }}
+                className="desk-button-amber px-6 py-3 text-[0.88rem]"
+              >
+                {saving ? "Saving…" : "Save the rulebook"}
+              </motion.button>
+              <AnimatePresence>
+                {savedAt ? (
+                  <motion.span
+                    key={savedAt}
+                    initial={shouldReduce ? { opacity: 1 } : { opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ok"
+                  >
+                    Saved, and recorded in the ledger
+                  </motion.span>
+                ) : null}
+              </AnimatePresence>
+              {note ? (
+                <span className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/35">
+                  {note}
+                </span>
+              ) : null}
+            </div>
+
+            {saveProblem ? (
+              <div>
+                <p className="text-[0.88rem] leading-[1.45] text-bad">{saveProblem.message}</p>
+                <p className="mt-1 text-[0.82rem] leading-[1.45] text-ink/55">{saveProblem.nextStep}</p>
               </div>
             ) : null}
-            {fieldIssues.get("tradingHoursUtc") ? (
-              <p className="text-[0.78rem] leading-[1.4] text-bad">
-                {fieldIssues.get("tradingHoursUtc")}
-              </p>
-            ) : null}
           </div>
-
-          <div>
-            <p className="desk-label">Cut back after losing</p>
-            <div className="mt-3 flex flex-col gap-2">
-              {form.drawdownTiers.map((tier, index) => (
-                <div key={`tier-${index}`} className="flex items-center gap-2">
-                  <span className="font-mono text-[0.8rem] text-ink/40">$</span>
-                  <input
-                    className="desk-input flex-1 py-2 font-mono text-[0.82rem]"
-                    inputMode="decimal"
-                    value={tier.lossUsd}
-                    onChange={(event) => {
-                      const next = [...form.drawdownTiers];
-                      next[index] = { ...tier, lossUsd: event.target.value };
-                      set("drawdownTiers", next);
-                    }}
-                  />
-                  <select
-                    className="desk-input w-[7.5rem] py-2 text-[0.82rem]"
-                    value={tier.action}
-                    onChange={(event) => {
-                      const next = [...form.drawdownTiers];
-                      next[index] = { ...tier, action: event.target.value as Tier["action"] };
-                      set("drawdownTiers", next);
-                    }}
-                  >
-                    <option value="halve">halve size</option>
-                    <option value="halt">stop trading</option>
-                  </select>
-                  <button
-                    type="button"
-                    aria-label="Remove this tier"
-                    onClick={() =>
-                      set(
-                        "drawdownTiers",
-                        form.drawdownTiers.filter((_, position) => position !== index),
-                      )
-                    }
-                    className="px-2 text-ink/40 transition-colors duration-200 hover:text-bad"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-              {[...fieldIssues.entries()]
-                .filter(([key]) => key.startsWith("drawdownTiers"))
-                .map(([key, message]) => (
-                  <p key={key} className="text-[0.78rem] leading-[1.4] text-bad">
-                    {message}
-                  </p>
-                ))}
-              <button
-                type="button"
-                onClick={() => set("drawdownTiers", [...form.drawdownTiers, { lossUsd: "0.00", action: "halve" }])}
-                className="desk-button-quiet mt-1 w-fit px-4 py-2 text-[0.8rem]"
-              >
-                Add a tier
-              </button>
-            </div>
-          </div>
-
-          <div className="rounded-control border border-ink/10 bg-ink/[0.02] p-4">
-            <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
-              Not yours to change
-            </p>
-            <p className="mt-2 text-[0.85rem] leading-[1.5] text-ink/55">
-              Leverage is off and one side per market is on. Olai is a spot agent, so these are
-              not settings, they are things it cannot do.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <motion.button
-              type="button"
-              onClick={() => void save()}
-              disabled={saving}
-              whileHover={shouldReduce || saving ? undefined : { scale: 1.02 }}
-              whileTap={shouldReduce || saving ? undefined : { scale: 0.99 }}
-              transition={{ type: "spring", stiffness: 420, damping: 28 }}
-              className="desk-button-amber px-6 py-3 text-[0.88rem]"
-            >
-              {saving ? "Saving…" : "Save the rulebook"}
-            </motion.button>
-            <AnimatePresence>
-              {savedAt ? (
-                <motion.span
-                  key={savedAt}
-                  initial={shouldReduce ? { opacity: 1 } : { opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ok"
-                >
-                  Saved, and recorded in the ledger
-                </motion.span>
-              ) : null}
-            </AnimatePresence>
-          </div>
-
-          {saveProblem ? (
-            <div>
-              <p className="text-[0.88rem] leading-[1.45] text-bad">{saveProblem.message}</p>
-              <p className="mt-1 text-[0.82rem] leading-[1.45] text-ink/55">{saveProblem.nextStep}</p>
-            </div>
-          ) : null}
-        </div>
+        </fieldset>
       )}
     </section>
   );

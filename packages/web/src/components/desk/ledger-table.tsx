@@ -18,6 +18,9 @@ import { bscscan, clockTime, shortHash, usd } from "@/lib/format";
  * Every line is hashed onto the one before it, so the verify button is not
  * decoration: it recomputes the whole chain on the service and names the first
  * line that does not match.
+ *
+ * A replay has no service to recompute anything, so it says when the chain was
+ * checked rather than offering a button that would prove nothing.
  */
 
 const GROUPS: Array<{ id: string; label: string; kinds: LedgerKind[] | null }> = [
@@ -57,15 +60,17 @@ export function LedgerTable({
   entries,
   loading,
   problem,
+  replay,
   onRetry,
   onUnauthorized,
 }: {
-  token: string;
+  token?: string;
   entries: LedgerEntry[];
   loading: boolean;
   problem: { message: string; nextStep: string } | null;
-  onRetry: () => void;
-  onUnauthorized: () => void;
+  replay?: { lines: number };
+  onRetry?: () => void;
+  onUnauthorized?: () => void;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
   const [group, setGroup] = useState("all");
@@ -86,10 +91,10 @@ export function LedgerTable({
     setChecking(true);
     setCheckProblem(null);
     try {
-      setCheck(await verifyLedger(token));
+      setCheck(await verifyLedger(token ?? ""));
     } catch (error) {
       if (error instanceof OlaiError && error.unauthorized) {
-        onUnauthorized();
+        onUnauthorized?.();
         return;
       }
       const failure = say(error);
@@ -122,14 +127,20 @@ export function LedgerTable({
       </div>
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => void verify()}
-          disabled={checking}
-          className="desk-button-quiet px-4 py-2 text-[0.8rem]"
-        >
-          {checking ? "Checking…" : "Verify chain"}
-        </button>
+        {replay ? (
+          <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink/45">
+            Recorded chain: verified at capture, {replay.lines} lines
+          </p>
+        ) : (
+          <button
+            type="button"
+            onClick={() => void verify()}
+            disabled={checking}
+            className="desk-button-quiet px-4 py-2 text-[0.8rem]"
+          >
+            {checking ? "Checking…" : "Verify chain"}
+          </button>
+        )}
         {check ? (
           check.ok ? (
             <span className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ok">
@@ -156,7 +167,11 @@ export function LedgerTable({
         <div className="mt-6">
           <p className="text-[0.88rem] leading-[1.45] text-bad">{problem.message}</p>
           <p className="mt-1 text-[0.82rem] leading-[1.45] text-ink/55">{problem.nextStep}</p>
-          <button type="button" onClick={onRetry} className="desk-button-quiet mt-4 px-4 py-2 text-[0.82rem]">
+          <button
+            type="button"
+            onClick={() => onRetry?.()}
+            className="desk-button-quiet mt-4 px-4 py-2 text-[0.82rem]"
+          >
             Try again
           </button>
         </div>
@@ -169,7 +184,9 @@ export function LedgerTable({
       ) : shown.length === 0 ? (
         <p className="mt-6 text-[0.9rem] leading-[1.5] text-ink/45">
           {entries.length === 0
-            ? "Nothing yet. Ask Olai a question."
+            ? replay
+              ? "The recorded run carries no lines."
+              : "Nothing yet. Ask Olai a question."
             : "No lines of that kind yet."}
         </p>
       ) : (
@@ -221,7 +238,8 @@ export function LedgerTable({
                     >
                       <div className="mb-3 rounded-control border border-ink/10 bg-ink/[0.02] p-4">
                         <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-ink/35">
-                          {entry.actor} · line {entry.seq} · hash {shortHash(entry.hash)}
+                          {entry.actor} · line {entry.seq} ·{" "}
+                          {replay ? "hash prefix" : "hash"} {shortHash(entry.hash)}
                         </p>
                         {entry.txHash ? (
                           <a
