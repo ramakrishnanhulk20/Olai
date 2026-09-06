@@ -26,14 +26,27 @@ export function ThinkingStream({
   replay?: boolean;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
-  const endRef = useRef<HTMLDivElement>(null);
+  const feedRef = useRef<HTMLDivElement>(null);
+  // Whether the reader was sitting at the bottom before this line arrived. A
+  // reader who scrolled up is left where they are, and the feed is scrolled by
+  // its own scrollTop so the page underneath never moves.
+  const atBottom = useRef(true);
 
-  useEffect(() => {
-    if (events.length === 0) {
+  const watch = () => {
+    const feed = feedRef.current;
+    if (!feed) {
       return;
     }
-    endRef.current?.scrollIntoView({ block: "end", behavior: shouldReduce ? "auto" : "smooth" });
-  }, [events.length, shouldReduce]);
+    atBottom.current = feed.scrollHeight - feed.scrollTop - feed.clientHeight <= 40;
+  };
+
+  useEffect(() => {
+    const feed = feedRef.current;
+    if (!feed || events.length === 0 || !atBottom.current) {
+      return;
+    }
+    feed.scrollTop = feed.scrollHeight;
+  }, [events.length]);
 
   return (
     <section className="desk-panel p-6">
@@ -41,7 +54,7 @@ export function ThinkingStream({
         <h2 className="desk-heading">Thinking</h2>
         <span
           className={`font-mono text-[0.62rem] uppercase tracking-[0.18em] ${
-            live ? "text-ok" : "text-ink/35"
+            live ? "text-ok" : "text-ink/55"
           }`}
         >
           {replay ? "Recorded feed" : live ? "Live feed" : "Feed reconnecting"}
@@ -49,7 +62,7 @@ export function ThinkingStream({
       </header>
 
       {events.length === 0 ? (
-        <p className="mt-5 text-[0.9rem] leading-[1.5] text-ink/45">
+        <p className="mt-5 text-[0.9rem] leading-[1.5] text-ink/55">
           {replay
             ? "The recorded run starts in a moment."
             : running
@@ -57,7 +70,12 @@ export function ThinkingStream({
               : "Nothing yet. Ask Olai a question and every step it takes shows up here."}
         </p>
       ) : (
-        <div className="desk-scroll mt-5 max-h-[26rem] pr-2" data-lenis-prevent>
+        <div
+          ref={feedRef}
+          onScroll={watch}
+          className="desk-scroll mt-5 max-h-[26rem] pr-2"
+          data-lenis-prevent
+        >
           <AnimatePresence initial={false}>
             {events.map((event, index) => (
               <motion.div
@@ -68,7 +86,7 @@ export function ThinkingStream({
                 className="border-b border-ink/[0.06] py-2.5 last:border-0"
               >
                 {replay ? (
-                  <span className="mb-1 block font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink/25">
+                  <span className="mb-1 block font-mono text-[0.58rem] uppercase tracking-[0.2em] text-ink/55">
                     replay
                   </span>
                 ) : null}
@@ -76,7 +94,6 @@ export function ThinkingStream({
               </motion.div>
             ))}
           </AnimatePresence>
-          <div ref={endRef} />
         </div>
       )}
     </section>
@@ -86,7 +103,7 @@ export function ThinkingStream({
 function Line({ event }: { event: BrainEvent }) {
   if (event.type === "thinking") {
     return (
-      <p className="font-mono text-[0.78rem] leading-[1.6] text-ink/40">{event.text}</p>
+      <p className="font-mono text-[0.78rem] leading-[1.6] text-ink/55">{event.text}</p>
     );
   }
 
@@ -96,7 +113,7 @@ function Line({ event }: { event: BrainEvent }) {
         <span className="mt-[0.45rem] block size-2 shrink-0 rounded-[2px] bg-amber" />
         <span className="min-w-0">
           <span className="font-mono text-[0.84rem] text-amber">{event.name}</span>
-          <span className="ml-2 break-words font-mono text-[0.75rem] text-ink/40">
+          <span className="ml-2 break-words font-mono text-[0.75rem] text-ink/55">
             {clip(event.input)}
           </span>
         </span>
@@ -107,7 +124,7 @@ function Line({ event }: { event: BrainEvent }) {
   if (event.type === "tool.result") {
     return (
       <p className="pl-[1.15rem] text-[0.85rem] leading-[1.5] text-ink/65">
-        <span className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink/30">
+        <span className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink/55">
           {event.name}
         </span>
         <span className="ml-2">{event.summary}</span>

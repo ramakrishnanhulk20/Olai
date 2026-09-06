@@ -1,0 +1,44 @@
+/*
+  The hero entrance is CSS, not JavaScript, so the first screen is readable the
+  moment the stylesheet lands instead of waiting for hydration. The stagger is an
+  inline animation-delay on each element.
+*/
+
+.enter {
+  animation: hero-rise 0.85s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The resting frame repeats the transform the global sheet gives .hero-still, so the
+   scroll parallax written into --hero-shift keeps working while this runs. */
+.still {
+  animation: hero-still-in 1.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes hero-still-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, var(--hero-shift, 0px), 0) scale(1.21);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, var(--hero-shift, 0px), 0) scale(1.14);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter,
+  .still {
+    animation: none;
+  }
+}

@@ -190,7 +190,7 @@ html.lenis body {
   font-size: 0.64rem;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  color: rgba(242, 239, 232, 0.4);
+  color: rgba(242, 239, 232, 0.55);
 }
 
 .desk-figure {
@@ -215,7 +215,7 @@ html.lenis body {
 }
 
 .desk-input::placeholder {
-  color: rgba(242, 239, 232, 0.25);
+  color: rgba(242, 239, 232, 0.5);
 }
 
 .desk-input:hover:not(:disabled) {
@@ -259,6 +259,36 @@ select.desk-input option {
   border-color: rgba(242, 239, 232, 0.34);
 }
 
+/* A remove control has to be thumb sized on a phone, so its hit area is 44px
+   there and the chip gives up its own padding to hold it without growing. */
+.desk-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: rgba(242, 239, 232, 0.55);
+  transition: color 0.2s ease;
+}
+
+.desk-remove:hover {
+  color: var(--color-bad);
+}
+
+@media (max-width: 639px) {
+  .desk-chip {
+    padding-block: 0;
+    padding-right: 0;
+  }
+}
+
+@media (min-width: 640px) {
+  .desk-remove {
+    min-width: 1.75rem;
+    min-height: 1.75rem;
+  }
+}
+
 .desk-filter {
   border-radius: var(--radius-control);
   border: 1px solid rgba(242, 239, 232, 0.12);
@@ -267,7 +297,7 @@ select.desk-input option {
   font-size: 0.66rem;
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: rgba(242, 239, 232, 0.45);
+  color: rgba(242, 239, 232, 0.55);
   transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
 }
 
@@ -280,6 +310,13 @@ select.desk-input option {
   color: var(--color-ground);
   background: var(--color-amber);
   border-color: var(--color-amber);
+}
+
+@media (max-width: 639px) {
+  .desk-filter {
+    min-height: 44px;
+    padding-inline: 0.85rem;
+  }
 }
 
 /* One session in the picker: a chip on a phone, a row on a desk. */
@@ -362,7 +399,21 @@ select.desk-input option {
   border-color: var(--color-bad);
 }
 
-/* The kill switch. Built to look like a thing you push, not a checkbox. */
+/* The kill switch. Built to look like a thing you push, not a checkbox.
+   The switch keeps its 70 by 34 face and the button around it carries the hit
+   area, because a thumb needs 44px and the face would look wrong that tall. */
+.desk-toggle-hit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.desk-toggle-hit:disabled {
+  cursor: not-allowed;
+}
+
 .desk-toggle {
   position: relative;
   display: inline-flex;

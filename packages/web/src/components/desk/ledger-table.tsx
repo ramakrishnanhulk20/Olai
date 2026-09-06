@@ -108,7 +108,7 @@ export function LedgerTable({
     <section className="desk-panel flex min-h-[24rem] flex-col p-6">
       <header className="flex items-baseline justify-between gap-4">
         <h2 className="desk-heading">Ledger</h2>
-        <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
+        <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/55">
           {entries.length} {entries.length === 1 ? "line" : "lines"}
         </span>
       </header>
@@ -128,7 +128,7 @@ export function LedgerTable({
 
       <div className="mt-5 flex flex-wrap items-center gap-3">
         {replay ? (
-          <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink/45">
+          <p className="font-mono text-[0.72rem] uppercase tracking-[0.14em] text-ink/55">
             Recorded chain: verified at capture, {replay.lines} lines
           </p>
         ) : (
@@ -182,7 +182,7 @@ export function LedgerTable({
           ))}
         </div>
       ) : shown.length === 0 ? (
-        <p className="mt-6 text-[0.9rem] leading-[1.5] text-ink/45">
+        <p className="mt-6 text-[0.9rem] leading-[1.5] text-ink/55">
           {entries.length === 0
             ? replay
               ? "The recorded run carries no lines."
@@ -205,25 +205,36 @@ export function LedgerTable({
                   type="button"
                   onClick={() => setOpen(open === entry.seq ? null : entry.seq)}
                   aria-expanded={open === entry.seq}
-                  className="flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 py-2.5 text-left transition-colors duration-200 hover:bg-ink/[0.03] sm:grid sm:grid-cols-[2.4rem_4.6rem_8rem_1fr_4.5rem_6rem] sm:items-baseline"
+                  className="flex w-full flex-col gap-1 py-2.5 text-left transition-colors duration-200 hover:bg-ink/[0.03]"
                 >
-                  <span className="hidden font-mono text-[0.7rem] text-ink/25 sm:block">
-                    {entry.seq}
+                  <span className="flex w-full flex-wrap items-baseline gap-x-3 gap-y-1">
+                    <span className="font-mono text-[0.72rem] text-ink/55">{entry.seq}</span>
+                    <span className="font-mono text-[0.72rem] text-ink/55">{clockTime(entry.ts)}</span>
+                    <span
+                      className={`font-mono text-[0.72rem] uppercase tracking-[0.1em] ${TONE[entry.kind] ?? "text-ink/55"}`}
+                    >
+                      {entry.kind}
+                    </span>
+                    <span className="ml-auto shrink-0 font-mono text-[0.74rem] text-amber">
+                      {entry.costUsd === undefined ? "" : usd(entry.costUsd)}
+                    </span>
                   </span>
-                  <span className="font-mono text-[0.7rem] text-ink/35">{clockTime(entry.ts)}</span>
-                  <span
-                    className={`font-mono text-[0.7rem] uppercase tracking-[0.1em] ${TONE[entry.kind] ?? "text-ink/45"}`}
-                  >
-                    {entry.kind}
-                  </span>
-                  <span className="w-full min-w-0 truncate text-[0.85rem] text-ink/75 sm:w-auto">
-                    {summarise(entry)}
-                  </span>
-                  <span className="ml-auto font-mono text-[0.72rem] text-amber sm:ml-0 sm:text-right">
-                    {entry.costUsd === undefined ? "" : usd(entry.costUsd)}
-                  </span>
-                  <span className="font-mono text-[0.7rem] text-ink/30 sm:text-right">
-                    {entry.txHash ? shortHash(entry.txHash) : ""}
+                  <span className="flex w-full items-baseline gap-x-3">
+                    <span
+                      data-ledger-summary
+                      className="min-w-0 flex-1 truncate text-[0.875rem] leading-[1.45] text-ink/75"
+                    >
+                      {summarise(entry)}
+                    </span>
+                    {entry.txHash ? (
+                      <span
+                        data-ledger-hash
+                        title={entry.txHash}
+                        className="shrink-0 font-mono text-[0.72rem] text-ink/55"
+                      >
+                        {entry.txHash.slice(0, 10)}
+                      </span>
+                    ) : null}
                   </span>
                 </button>
 
@@ -237,7 +248,7 @@ export function LedgerTable({
                       className="overflow-hidden"
                     >
                       <div className="mb-3 rounded-control border border-ink/10 bg-ink/[0.02] p-4">
-                        <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-ink/35">
+                        <p className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-ink/55">
                           {entry.actor} · line {entry.seq} ·{" "}
                           {replay ? "hash prefix" : "hash"} {shortHash(entry.hash)}
                         </p>

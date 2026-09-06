@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import { useCalmEntrance } from "./use-calm-entrance";
 
 const rise: Variants = {
   hidden: { opacity: 0, y: 26 },
@@ -10,7 +11,7 @@ const rise: Variants = {
 const flat: Variants = { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } };
 
 export function KillSwitch() {
-  const shouldReduce = useReducedMotion() ?? false;
+  const shouldReduce = useCalmEntrance();
   const enter = shouldReduce ? flat : rise;
 
   const throwTo: Variants = {
@@ -94,7 +95,7 @@ export function KillSwitch() {
         >
           <motion.p
             variants={enter}
-            className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/45"
+            className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/55"
           >
             <span className="block size-2 rounded-[2px] bg-amber" />
             One control the owner always holds

@@ -20,6 +20,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
+      prefetch={false}
       onClick={onNavigate}
       aria-current={current ? "page" : undefined}
       className={`docs-nav-link${current ? " is-current" : ""}`}
@@ -58,7 +59,7 @@ export function DocsSidebar({
 
   if (filtered.length === 0) {
     return (
-      <p className="px-4 py-6 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/35">
+      <p className="px-4 py-6 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/60">
         No page by that name
       </p>
     );

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import { useCalmEntrance } from "./use-calm-entrance";
 
 // Next inlines NEXT_PUBLIC_ values at build time. Unset, they read undefined
 // here, so the fallback is what keeps the anchor from rendering href="undefined".
@@ -18,7 +19,7 @@ const rise: Variants = {
 const flat: Variants = { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } };
 
 export function StoryFooter() {
-  const shouldReduce = useReducedMotion() ?? false;
+  const shouldReduce = useCalmEntrance();
   const enter = shouldReduce ? flat : rise;
 
   return (
@@ -46,9 +47,11 @@ export function StoryFooter() {
             <a
               key={link.label}
               href={link.href}
-              className="relative font-body text-[1rem] text-ink/70 transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-amber after:transition-all after:duration-300 hover:text-ink hover:after:w-full"
+              className="group inline-flex min-h-11 items-center font-body text-[1rem] text-ink/70 transition-colors duration-300 hover:text-ink"
             >
-              {link.label}
+              <span className="relative after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-amber after:transition-all after:duration-300 group-hover:after:w-full">
+                {link.label}
+              </span>
             </a>
           ))}
         </motion.nav>
@@ -61,14 +64,14 @@ export function StoryFooter() {
         transition={{ duration: 0.8, delay: 0.15 }}
         className="relative z-20 mt-[clamp(2.5rem,7vh,4rem)] flex flex-col gap-[clamp(1rem,2.5vh,1.5rem)]"
       >
-        <p className="max-w-[64ch] font-body text-[0.95rem] leading-[1.65] text-ink/45">
+        <p className="max-w-[64ch] font-body text-[0.95rem] leading-[1.65] text-ink/55">
           An olai is the palm leaf that old Tamil ledgers were written on. Once a line was cut into
           it, the only way to change the record was to destroy the leaf.
         </p>
 
         <a
           href={`${process.env.NEXT_PUBLIC_REPO_URL ?? "https://github.com/ramakrishnanhulk20/Olai"}/blob/main/docs/security/attacks/SUMMARY.md`}
-          className="relative w-fit font-mono text-[0.72rem] uppercase leading-[1.6] tracking-[0.18em] text-ink/35 transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-amber after:transition-all after:duration-300 hover:text-ink hover:after:w-full"
+          className="relative w-fit font-mono text-[0.72rem] uppercase leading-[1.6] tracking-[0.18em] text-ink/55 transition-colors duration-300 after:absolute after:-bottom-1 after:left-0 after:h-px after:w-0 after:bg-amber after:transition-all after:duration-300 hover:text-ink hover:after:w-full"
         >
           Self-audited: fourteen attacks executed, thirteen blocked, one published as a known gap.
         </a>

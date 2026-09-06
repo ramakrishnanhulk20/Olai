@@ -11,6 +11,8 @@ const eslintConfig = defineConfig([
     ".next/**",
     // The verification build writes here, set by NEXT_DIST_DIR.
     ".next-verify/**",
+    // Any other NEXT_DIST_DIR a throwaway server writes.
+    ".next-*/**",
     "out/**",
     "build/**",
     "next-env.d.ts",

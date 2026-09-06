@@ -1,6 +1,6 @@
 # Attack run: what we tried and what happened
 
-Captured on 2026-09-06T12:12:35.109Z. Every line below came from one run of
+Captured on 2026-09-06T14:59:29.810Z. Every line below came from one run of
 `npm run attacks -w @olai/agent`, which boots the real Olai service in this
 repo with a temporary SQLite ledger, the fake exchange, a scripted stand-in for
 Claude and a stand-in for the wallet CLI, then attacks it over real HTTP on a

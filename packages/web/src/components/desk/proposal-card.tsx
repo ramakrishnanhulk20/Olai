@@ -22,7 +22,7 @@ const STATUS: Record<ProposalStatus, { label: string; tone: string; dot: string 
   approved: { label: "Approved", tone: "text-ok", dot: "bg-ok" },
   executed: { label: "Executed", tone: "text-ok", dot: "bg-ok" },
   refused: { label: "Refused by the rulebook", tone: "text-bad", dot: "bg-bad" },
-  rejected: { label: "You said no", tone: "text-ink/50", dot: "bg-ink/40" },
+  rejected: { label: "You said no", tone: "text-ink/55", dot: "bg-ink/40" },
   failed: { label: "It did not go through", tone: "text-bad", dot: "bg-bad" },
 };
 
@@ -69,7 +69,7 @@ export function ProposalCard({
         </span>
       </header>
 
-      <p className="mt-4 text-[0.85rem] leading-[1.5] text-ink/45">{session.question}</p>
+      <p className="mt-4 text-[0.85rem] leading-[1.5] text-ink/55">{session.question}</p>
 
       {!proposal ? (
         <p className="mt-6 text-[0.9rem] text-ink/55">Olai has not finished this one yet.</p>
@@ -89,7 +89,7 @@ export function ProposalCard({
           </p>
           {proposal.action.type === "order" ? (
             replay ? null : (
-              <p className="mt-2 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/40">
+              <p className="mt-2 font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/55">
                 {proposal.action.orderType}
                 {proposal.action.limitPrice === undefined
                   ? ""
@@ -106,7 +106,7 @@ export function ProposalCard({
             <div className="mt-6">
               <div className="flex items-baseline justify-between">
                 <span className="desk-label">Confidence</span>
-                <span className="font-mono text-[0.72rem] text-ink/50">
+                <span className="font-mono text-[0.72rem] text-ink/55">
                   {percent(proposal.confidence)}
                 </span>
               </div>
@@ -129,11 +129,11 @@ export function ProposalCard({
           <div className="mt-7 grid gap-6 sm:grid-cols-2">
             <div>
               <p className="desk-label">Data it says it used</p>
-              <p className="mt-1.5 text-[0.78rem] leading-[1.4] text-ink/35">
+              <p className="mt-1.5 text-[0.78rem] leading-[1.4] text-ink/55">
                 the model writes this list; the ledger below is the record
               </p>
               {proposal.dataUsed.length === 0 ? (
-                <p className="mt-2 text-[0.85rem] text-ink/45">Nothing bought for this one.</p>
+                <p className="mt-2 text-[0.85rem] text-ink/55">Nothing bought for this one.</p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2">
                   {proposal.dataUsed.map((item) => (
@@ -148,12 +148,12 @@ export function ProposalCard({
                             href={bscscan(item.txHash)}
                             target="_blank"
                             rel="noreferrer"
-                            className="font-mono text-[0.72rem] text-ink/40 underline decoration-ink/20 underline-offset-4 transition-colors duration-200 hover:text-ok hover:decoration-ok"
+                            className="font-mono text-[0.72rem] text-ink/55 underline decoration-ink/20 underline-offset-4 transition-colors duration-200 hover:text-ok hover:decoration-ok"
                           >
                             {shortHash(item.txHash)}
                           </a>
                         ) : (
-                          <span className="font-mono text-[0.72rem] text-ink/30">no tx</span>
+                          <span className="font-mono text-[0.72rem] text-ink/55">no tx</span>
                         )}
                       </span>
                     </li>
@@ -165,11 +165,11 @@ export function ProposalCard({
             <div>
               <p className="desk-label">What could go wrong</p>
               {replay ? (
-                <p className="mt-2 text-[0.85rem] leading-[1.5] text-ink/45">
+                <p className="mt-2 text-[0.85rem] leading-[1.5] text-ink/55">
                   The export does not carry the risk list.
                 </p>
               ) : proposal.risks.length === 0 ? (
-                <p className="mt-2 text-[0.85rem] text-ink/45">Olai named no risks.</p>
+                <p className="mt-2 text-[0.85rem] text-ink/55">Olai named no risks.</p>
               ) : (
                 <ul className="mt-3 flex flex-col gap-2">
                   {proposal.risks.map((risk) => (
@@ -199,11 +199,11 @@ export function ProposalCard({
             {session.verdict.allowed ? "The rulebook allows this" : "The rulebook refuses this"}
           </p>
           {replay ? (
-            <p className="mt-2 font-mono text-[0.72rem] text-ink/45">
+            <p className="mt-2 font-mono text-[0.72rem] text-ink/55">
               {session.verdict.requiresApproval ? "Your approval required" : ""}
             </p>
           ) : (
-            <p className="mt-2 font-mono text-[0.72rem] text-ink/45">
+            <p className="mt-2 font-mono text-[0.72rem] text-ink/55">
               Biggest order the rules allow right now {usd(session.verdict.effectiveMaxOrderUsd)}
               {session.verdict.requiresApproval ? " · your approval required" : ""}
             </p>
@@ -213,7 +213,7 @@ export function ProposalCard({
               <li key={`${line}-${index}`} className="text-[0.88rem] leading-[1.5] text-ink/70">
                 {line}
                 {session.verdict?.ruleIds[index] ? (
-                  <span className="ml-2 font-mono text-[0.7rem] text-ink/35">
+                  <span className="ml-2 font-mono text-[0.7rem] text-ink/55">
                     {session.verdict.ruleIds[index]}
                   </span>
                 ) : null}

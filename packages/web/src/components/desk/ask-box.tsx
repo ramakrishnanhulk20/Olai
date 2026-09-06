@@ -90,7 +90,7 @@ export function AskBox({
             {running ? "Olai is working…" : "Ask Olai"}
           </motion.button>
 
-          <span className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-ink/35">
+          <span className="font-mono text-[0.66rem] uppercase tracking-[0.16em] text-ink/55">
             Every answer is paid for from the wallet
           </span>
         </div>
@@ -108,9 +108,9 @@ export function AskBox({
               </div>
               <p className="mt-3 text-[0.88rem] leading-[1.45] text-ink/60">
                 Olai is reading the market and shopping for data, this can take a minute.
-                <span className="ml-2 font-mono text-[0.78rem] text-ink/40">{seconds}s</span>
+                <span className="ml-2 font-mono text-[0.78rem] text-ink/55">{seconds}s</span>
               </p>
-              <p className="mt-1.5 text-[0.82rem] leading-[1.45] text-ink/45">
+              <p className="mt-1.5 text-[0.82rem] leading-[1.45] text-ink/55">
                 Paid data comes out of the wallet&apos;s daily limit and the rulebook&apos;s data
                 budget.
               </p>

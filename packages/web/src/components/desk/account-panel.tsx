@@ -65,12 +65,12 @@ export function AccountPanel({
       <section className="desk-panel p-6">
         <header className="flex items-baseline justify-between gap-4">
           <h2 className="desk-heading">Account</h2>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink/35">
+          <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink/55">
             Not shown in replay
           </span>
         </header>
         <p className="mt-5 text-[0.88rem] leading-[1.5] text-ink/55">{replay}</p>
-        <p className="mt-2 text-[0.82rem] leading-[1.45] text-ink/40">
+        <p className="mt-2 text-[0.82rem] leading-[1.45] text-ink/55">
           Daily loss counts price moves as well as fills.
         </p>
       </section>
@@ -82,7 +82,7 @@ export function AccountPanel({
       <header className="flex items-baseline justify-between gap-4">
         <h2 className="desk-heading">Account</h2>
         {account?.lastOrderAtIso ? (
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink/35">
+          <span className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-ink/55">
             Last order {ago(account.lastOrderAtIso)}
           </span>
         ) : null}
@@ -109,7 +109,7 @@ export function AccountPanel({
               <p className={`desk-figure mt-2 ${account.dailyLossUsd > 0 ? "text-bad" : "text-ink"}`}>
                 {usd(account.dailyLossUsd)}
               </p>
-              <p className="mt-2 text-[0.78rem] leading-[1.4] text-ink/40">
+              <p className="mt-2 text-[0.78rem] leading-[1.4] text-ink/55">
                 Daily loss counts price moves as well as fills.
               </p>
             </div>
@@ -125,7 +125,7 @@ export function AccountPanel({
               {account.openPositions.length > 0 ? ` (${account.openPositions.length})` : ""}
             </p>
             {account.openPositions.length === 0 ? (
-              <p className="mt-2 text-[0.85rem] text-ink/50">Nothing held.</p>
+              <p className="mt-2 text-[0.85rem] text-ink/55">Nothing held.</p>
             ) : (
               <ul className="desk-scroll mt-3 flex max-h-[15rem] flex-col gap-2 pr-2" data-lenis-prevent>
                 {account.openPositions.map((position) => (
@@ -135,7 +135,7 @@ export function AccountPanel({
                   >
                     <span className="font-mono text-[0.78rem] uppercase tracking-[0.1em] text-ink/60">
                       {position.symbol}
-                      <span className="ml-2 text-ink/35">{position.side}</span>
+                      <span className="ml-2 text-ink/55">{position.side}</span>
                     </span>
                     <span className="font-mono text-[0.85rem] text-ink">{usd(position.usd)}</span>
                   </li>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { OlaiError, getRulebook, putRulebook, say, type ApiIssue, type Rulebook } from "@/lib/api";
 
@@ -28,6 +28,21 @@ const STARTER = {
 };
 
 type Tier = { lossUsd: string; action: "halve" | "halt" };
+
+/** What each field is called on screen, so a refusal can name it. */
+const LABELS: Record<string, string> = {
+  name: "What this rulebook is called",
+  maxOrderUsd: "Biggest single order",
+  maxDailyLossUsd: "Most it may lose in a day",
+  maxPositionUsdPerSymbol: "Most held in one market",
+  requireApprovalAboveUsd: "Ask me above",
+  maxDataSpendUsdPerDay: "Data budget for a day",
+  maxDataSpendUsdPerCall: "Most for one data call",
+  cooldownSecondsBetweenOrders: "Wait between orders, in seconds",
+  allowedSymbols: "Markets it may trade",
+  tradingHoursUtc: "Only trade between two hours, UTC",
+  drawdownTiers: "Cut back after losing",
+};
 
 interface Form {
   name: string;
@@ -139,8 +154,42 @@ export function RulebookPanel({
   const [saveProblem, setSaveProblem] = useState<{ message: string; nextStep: string } | null>(null);
   const [issues, setIssues] = useState<ApiIssue[]>([]);
   const [symbolDraft, setSymbolDraft] = useState("");
+  const panelRef = useRef<HTMLElement>(null);
 
   const fieldIssues = useMemo(() => issuesByField(issues), [issues]);
+  const refused = issues[0] ? (issues[0].path ?? []) : [];
+  const refusedLabel = LABELS[refused.join(".")] ?? LABELS[String(refused[0] ?? "")] ?? null;
+
+  /**
+   * The refused field is at the top of a tall panel and the message about it is
+   * at the bottom, so on a laptop the two are never on screen together. Saving
+   * moves the page to the field and puts the cursor in it.
+   */
+  const pointAtRefusal = (found: ApiIssue[]) => {
+    const path = found[0]?.path ?? [];
+    if (path.length === 0) {
+      return;
+    }
+    const keys = [path.join("."), String(path[0])];
+    requestAnimationFrame(() => {
+      const root = panelRef.current;
+      if (!root) {
+        return;
+      }
+      let holder: HTMLElement | null = null;
+      for (const key of keys) {
+        holder = root.querySelector<HTMLElement>(`[data-field="${key}"]`);
+        if (holder) {
+          break;
+        }
+      }
+      if (!holder) {
+        return;
+      }
+      holder.scrollIntoView({ block: "center" });
+      holder.querySelector<HTMLElement>("input, select, textarea")?.focus({ preventScroll: true });
+    });
+  };
 
   const load = useCallback(
     (signal?: AbortSignal) =>
@@ -206,16 +255,17 @@ export function RulebookPanel({
       const problem = say(error);
       setSaveProblem({ message: problem.message, nextStep: problem.nextStep });
       setIssues(problem.issues);
+      pointAtRefusal(problem.issues);
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <section className="desk-panel p-6">
+    <section ref={panelRef} className="desk-panel p-6">
       <header className="flex items-baseline justify-between gap-4">
         <h2 className="desk-heading">Rulebook</h2>
-        <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
+        <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/55">
           {replay ? "Shipped defaults" : "Checked in code"}
         </span>
       </header>
@@ -243,7 +293,7 @@ export function RulebookPanel({
       ) : (
         <fieldset disabled={replay !== undefined} className="m-0 min-w-0 border-0 p-0">
           <div className="mt-6 flex flex-col gap-5">
-            <Field label="What this rulebook is called" issue={fieldIssues.get("name")}>
+            <Field label={LABELS.name} name="name" issue={fieldIssues.get("name")}>
               <input
                 className="desk-input"
                 value={form.name}
@@ -254,42 +304,48 @@ export function RulebookPanel({
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Money
-                label="Biggest single order"
+                label={LABELS.maxOrderUsd}
+                name="maxOrderUsd"
                 value={form.maxOrderUsd}
                 placeholder={STARTER.maxOrderUsd}
                 issue={fieldIssues.get("maxOrderUsd")}
                 onChange={(value) => set("maxOrderUsd", value)}
               />
               <Money
-                label="Most it may lose in a day"
+                label={LABELS.maxDailyLossUsd}
+                name="maxDailyLossUsd"
                 value={form.maxDailyLossUsd}
                 placeholder={STARTER.maxDailyLossUsd}
                 issue={fieldIssues.get("maxDailyLossUsd")}
                 onChange={(value) => set("maxDailyLossUsd", value)}
               />
               <Money
-                label="Most held in one market"
+                label={LABELS.maxPositionUsdPerSymbol}
+                name="maxPositionUsdPerSymbol"
                 value={form.maxPositionUsdPerSymbol}
                 placeholder={STARTER.maxPositionUsdPerSymbol}
                 issue={fieldIssues.get("maxPositionUsdPerSymbol")}
                 onChange={(value) => set("maxPositionUsdPerSymbol", value)}
               />
               <Money
-                label="Ask me above"
+                label={LABELS.requireApprovalAboveUsd}
+                name="requireApprovalAboveUsd"
                 value={form.requireApprovalAboveUsd}
                 placeholder={STARTER.requireApprovalAboveUsd}
                 issue={fieldIssues.get("requireApprovalAboveUsd")}
                 onChange={(value) => set("requireApprovalAboveUsd", value)}
               />
               <Money
-                label="Data budget for a day"
+                label={LABELS.maxDataSpendUsdPerDay}
+                name="maxDataSpendUsdPerDay"
                 value={form.maxDataSpendUsdPerDay}
                 placeholder={STARTER.maxDataSpendUsdPerDay}
                 issue={fieldIssues.get("maxDataSpendUsdPerDay")}
                 onChange={(value) => set("maxDataSpendUsdPerDay", value)}
               />
               <Money
-                label="Most for one data call"
+                label={LABELS.maxDataSpendUsdPerCall}
+                name="maxDataSpendUsdPerCall"
                 value={form.maxDataSpendUsdPerCall}
                 placeholder={STARTER.maxDataSpendUsdPerCall}
                 issue={fieldIssues.get("maxDataSpendUsdPerCall")}
@@ -298,7 +354,8 @@ export function RulebookPanel({
             </div>
 
             <Field
-              label="Wait between orders, in seconds"
+              label={LABELS.cooldownSecondsBetweenOrders}
+              name="cooldownSecondsBetweenOrders"
               issue={fieldIssues.get("cooldownSecondsBetweenOrders")}
             >
               <input
@@ -310,7 +367,11 @@ export function RulebookPanel({
               />
             </Field>
 
-            <Field label="Markets it may trade" issue={fieldIssues.get("allowedSymbols")}>
+            <Field
+              label={LABELS.allowedSymbols}
+              name="allowedSymbols"
+              issue={fieldIssues.get("allowedSymbols")}
+            >
               <div className="flex flex-wrap items-center gap-2">
                 {form.allowedSymbols.map((symbol) => (
                   <span key={symbol} className="desk-chip">
@@ -324,7 +385,7 @@ export function RulebookPanel({
                           form.allowedSymbols.filter((entry) => entry !== symbol),
                         )
                       }
-                      className="ml-2 text-ink/45 transition-colors duration-200 hover:text-bad"
+                      className="desk-remove"
                     >
                       ×
                     </button>
@@ -354,13 +415,17 @@ export function RulebookPanel({
                 onChange={(value) => set("allowShort", value)}
               />
               <Switch
-                label="Only trade between two hours, UTC"
+                label={LABELS.tradingHoursUtc}
                 checked={form.hours}
                 onChange={(value) => set("hours", value)}
               />
               {form.hours ? (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <Field label="From hour" issue={fieldIssues.get("tradingHoursUtc.start")}>
+                  <Field
+                    label="From hour"
+                    name="tradingHoursUtc.start"
+                    issue={fieldIssues.get("tradingHoursUtc.start")}
+                  >
                     <input
                       className="desk-input"
                       inputMode="numeric"
@@ -368,7 +433,11 @@ export function RulebookPanel({
                       onChange={(event) => set("hoursStart", event.target.value)}
                     />
                   </Field>
-                  <Field label="To hour" issue={fieldIssues.get("tradingHoursUtc.end")}>
+                  <Field
+                    label="To hour"
+                    name="tradingHoursUtc.end"
+                    issue={fieldIssues.get("tradingHoursUtc.end")}
+                  >
                     <input
                       className="desk-input"
                       inputMode="numeric"
@@ -385,14 +454,14 @@ export function RulebookPanel({
               ) : null}
             </div>
 
-            <div>
-              <p className="desk-label">Cut back after losing</p>
+            <div data-field="drawdownTiers">
+              <p className="desk-label">{LABELS.drawdownTiers}</p>
               <div className="mt-3 flex flex-col gap-2">
                 {form.drawdownTiers.map((tier, index) => (
                   <div key={`tier-${index}`} className="flex items-center gap-2">
-                    <span className="font-mono text-[0.8rem] text-ink/40">$</span>
+                    <span className="font-mono text-[0.8rem] text-ink/55">$</span>
                     <input
-                      className="desk-input flex-1 py-2 font-mono text-[0.82rem]"
+                      className="desk-input min-w-0 flex-1 basis-0 py-2 font-mono text-[0.82rem]"
                       inputMode="decimal"
                       value={tier.lossUsd}
                       onChange={(event) => {
@@ -402,7 +471,7 @@ export function RulebookPanel({
                       }}
                     />
                     <select
-                      className="desk-input w-[7.5rem] py-2 text-[0.82rem]"
+                      className="desk-input w-[7.5rem] shrink-0 basis-[7.5rem] py-2 text-[0.82rem]"
                       value={tier.action}
                       onChange={(event) => {
                         const next = [...form.drawdownTiers];
@@ -422,7 +491,7 @@ export function RulebookPanel({
                           form.drawdownTiers.filter((_, position) => position !== index),
                         )
                       }
-                      className="px-2 text-ink/40 transition-colors duration-200 hover:text-bad"
+                      className="desk-remove shrink-0"
                     >
                       ×
                     </button>
@@ -446,7 +515,7 @@ export function RulebookPanel({
             </div>
 
             <div className="rounded-control border border-ink/10 bg-ink/[0.02] p-4">
-              <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
+              <p className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/55">
                 Not yours to change
               </p>
               <p className="mt-2 text-[0.85rem] leading-[1.5] text-ink/55">
@@ -481,16 +550,20 @@ export function RulebookPanel({
                 ) : null}
               </AnimatePresence>
               {note ? (
-                <span className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/35">
+                <span className="font-mono text-[0.72rem] uppercase tracking-[0.16em] text-ink/55">
                   {note}
                 </span>
               ) : null}
             </div>
 
             {saveProblem ? (
-              <div>
+              <div role="alert">
                 <p className="text-[0.88rem] leading-[1.45] text-bad">{saveProblem.message}</p>
-                <p className="mt-1 text-[0.82rem] leading-[1.45] text-ink/55">{saveProblem.nextStep}</p>
+                <p className="mt-1 text-[0.82rem] leading-[1.45] text-ink/55">
+                  {refusedLabel
+                    ? `Fix ${refusedLabel} below and send it again.`
+                    : saveProblem.nextStep}
+                </p>
               </div>
             ) : null}
           </div>
@@ -502,15 +575,17 @@ export function RulebookPanel({
 
 function Field({
   label,
+  name,
   issue,
   children,
 }: {
   label: string;
+  name?: string;
   issue?: string;
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
+    <label className="block" data-field={name}>
       <span className="desk-label">{label}</span>
       <span className="mt-2 block">{children}</span>
       {issue ? <span className="mt-1.5 block text-[0.78rem] leading-[1.4] text-bad">{issue}</span> : null}
@@ -520,21 +595,23 @@ function Field({
 
 function Money({
   label,
+  name,
   value,
   placeholder,
   issue,
   onChange,
 }: {
   label: string;
+  name: string;
   value: string;
   placeholder: string;
   issue?: string;
   onChange: (value: string) => void;
 }) {
   return (
-    <Field label={label} issue={issue}>
+    <Field label={label} name={name} issue={issue}>
       <span className="relative block">
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[0.8rem] text-ink/35">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-[0.8rem] text-ink/55">
           $
         </span>
         <input

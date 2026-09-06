@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useInView, useReducedMotion, type Variants } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
+import { useCalmEntrance } from "./use-calm-entrance";
 
 const rise: Variants = {
   hidden: { opacity: 0, y: 28 },
@@ -17,7 +18,7 @@ const settlements = [
 ];
 
 export function Cent() {
-  const shouldReduce = useReducedMotion() ?? false;
+  const shouldReduce = useCalmEntrance();
   const enter = shouldReduce ? flat : rise;
 
   const numeralRef = useRef<HTMLSpanElement>(null);
@@ -73,7 +74,7 @@ export function Cent() {
         >
           <motion.p
             variants={enter}
-            className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/45"
+            className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/55"
           >
             <span className="block size-2 rounded-[2px] bg-amber" />
             What a call costs
@@ -105,7 +106,7 @@ export function Cent() {
           </motion.p>
 
           <motion.div variants={enter} className="mt-[clamp(1.5rem,4vh,2.5rem)]">
-            <p className="flex items-center gap-3 font-mono text-[0.72rem] leading-[1.5] tracking-[0.06em] text-ink/45">
+            <p className="flex items-center gap-3 font-mono text-[0.72rem] leading-[1.5] tracking-[0.06em] text-ink/55">
               <span className="block size-2 shrink-0 rounded-[2px] bg-amber" />
               Two of Olai&rsquo;s own cents, settled on BNB Smart Chain:
             </p>

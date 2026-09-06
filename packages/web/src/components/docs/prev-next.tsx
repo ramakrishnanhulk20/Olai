@@ -8,7 +8,7 @@ export function DocsPrevNext({ previous, next }: { previous: Step; next: Step })
   return (
     <nav aria-label="Previous and next page" className="docs-prevnext">
       {previous ? (
-        <Link href={previous.href} className="docs-step">
+        <Link href={previous.href} prefetch={false} className="docs-step">
           <span className="docs-step-label">Previous</span>
           <span className="docs-step-title">{previous.title}</span>
         </Link>
@@ -17,7 +17,7 @@ export function DocsPrevNext({ previous, next }: { previous: Step; next: Step })
       )}
 
       {next ? (
-        <Link href={next.href} className="docs-step is-next">
+        <Link href={next.href} prefetch={false} className="docs-step is-next">
           <span className="docs-step-label">Next</span>
           <span className="docs-step-title">{next.title}</span>
         </Link>

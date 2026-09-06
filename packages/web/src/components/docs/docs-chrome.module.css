@@ -1,0 +1,113 @@
+/*
+  Corrections to the docs chrome from the browser audit: the contrast floor on the
+  small print, a readable measure for the article, a thumb sized target on the
+  phone, and diagrams that fit their column. They live here rather than in the
+  global sheet, and the doubled selectors are what give them the weight to win.
+*/
+
+.chrome :global(.docs-topbar-tag),
+.chrome :global(.docs-group-head),
+.chrome :global(.docs-code-lang),
+.chrome :global(.docs-code-copy),
+.chrome :global(.docs-toc-head),
+.chrome :global(.docs-step-label),
+.chrome :global(.docs-table th) {
+  color: rgba(242, 239, 232, 0.6);
+}
+
+.chrome :global(.docs-group-head):hover {
+  color: rgba(242, 239, 232, 0.85);
+}
+
+.chrome :global(.docs-code-copy):hover {
+  color: var(--color-ground);
+}
+
+.chrome :global(.docs-main) {
+  max-width: 68ch;
+  font-size: 1.0625rem;
+}
+
+@media (min-width: 1280px) {
+  /* The measure is capped at the article, so the width it gives back goes to the
+     on this page column rather than to an empty gutter. */
+  .chrome :global(.docs-columns) {
+    font-size: 1.0625rem;
+    grid-template-columns: minmax(0, 68ch) minmax(14rem, 1fr);
+  }
+}
+
+@media (max-width: 1023px) {
+  .chrome :global(.docs-drawer-button) {
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0 0.7rem;
+  }
+
+  .chrome :global(.docs-nav-link) {
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .chrome :global(.docs-article h2 > a[href^="#"]),
+  .chrome :global(.docs-article h3 > a[href^="#"]),
+  .chrome :global(.docs-article h4 > a[href^="#"]) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    vertical-align: middle;
+  }
+
+  /* On a touch screen there is no hover to reveal it, so the mark is always there. */
+  .chrome :global(.docs-anchor) {
+    margin-left: 0;
+    color: rgba(245, 165, 36, 0.6);
+  }
+}
+
+.diagram.diagram {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.9rem;
+}
+
+.diagramFrame.diagramFrame {
+  max-height: none;
+  overflow: visible;
+}
+
+.diagramFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+}
+
+.diagramOpen {
+  border-radius: 6px;
+  border: 1px solid rgba(242, 239, 232, 0.16);
+  padding: 0.3rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(242, 239, 232, 0.6);
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.diagramOpen:hover {
+  color: var(--color-ground);
+  background: var(--color-amber);
+  border-color: var(--color-amber);
+}
+
+.diagramNote {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: rgba(242, 239, 232, 0.6);
+}

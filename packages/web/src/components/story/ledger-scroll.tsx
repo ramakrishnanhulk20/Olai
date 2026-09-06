@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import { useCalmEntrance } from "./use-calm-entrance";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import sample from "../../../public/ledger-sample.json";
@@ -38,7 +39,7 @@ function money(amount: number): string {
 }
 
 export function LedgerScroll() {
-  const shouldReduce = useReducedMotion() ?? false;
+  const shouldReduce = useCalmEntrance();
   const enter = shouldReduce ? flat : rise;
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -100,12 +101,9 @@ export function LedgerScroll() {
         className="relative z-20 grid grid-cols-12 items-end gap-y-[clamp(1rem,2.5vh,1.75rem)]"
       >
         <motion.div variants={enter} className="col-span-12 md:col-span-5">
-          <p className="flex items-start gap-3 font-mono text-[0.72rem] uppercase leading-[1.6] tracking-[0.18em] text-ink/45">
+          <p className="flex items-start gap-3 font-mono text-[0.72rem] uppercase leading-[1.6] tracking-[0.18em] text-ink/55">
             <span className="mt-[0.35em] block size-2 shrink-0 rounded-[2px] bg-amber" />
-            <span className="max-w-[46ch]">
-              captured from a live run: the payment is real USDT on BNB Smart Chain, the order filled
-              on the Binance spot testnet
-            </span>
+            <span className="max-w-[46ch]">captured from a live run</span>
           </p>
           <h2
             className="mt-[clamp(0.75rem,2vh,1.25rem)] font-display font-extrabold text-ink"
@@ -115,13 +113,19 @@ export function LedgerScroll() {
           </h2>
         </motion.div>
 
-        <motion.p
+        <motion.div
           variants={enter}
-          className="col-span-12 max-w-[52ch] font-body text-[1rem] leading-[1.6] text-ink/65 md:col-span-6 md:col-start-7 md:pb-[1.2vh]"
+          className="col-span-12 md:col-span-6 md:col-start-7 md:pb-[1.2vh]"
         >
-          Every cent, every rule verdict, every order, hash-chained. Edit a line and the chain
-          breaks.
-        </motion.p>
+          <p className="max-w-[52ch] font-body text-[1rem] leading-[1.6] text-ink/65">
+            Every cent, every rule verdict, every order, hash-chained. Edit a line and the chain
+            breaks.
+          </p>
+          <p className="mt-[0.65rem] max-w-[52ch] font-body text-[1rem] leading-[1.6] text-ink/55">
+            The payment is real USDT on BNB Smart Chain, the order filled on the Binance spot
+            testnet.
+          </p>
+        </motion.div>
       </motion.header>
 
       <ol className="relative z-20 mt-[clamp(2rem,5vh,3.5rem)] border-t border-ink/10 font-body text-[clamp(0.72rem,1.45vh,0.9rem)]">
@@ -136,7 +140,7 @@ export function LedgerScroll() {
                 (settlement ? " ledger-row--settled" : "")
               }
             >
-              <span className="font-mono text-ink/35">{String(row.seq).padStart(2, "0")}</span>
+              <span className="font-mono text-ink/55">{String(row.seq).padStart(2, "0")}</span>
               <span className="col-start-2 font-mono text-[0.9em] uppercase tracking-[0.12em] text-ink/50">
                 {row.kind}
               </span>
@@ -159,7 +163,7 @@ export function LedgerScroll() {
                   {settlement.slice(0, 10)}
                 </a>
               ) : (
-                <span className="col-start-2 font-mono text-ink/25 md:col-start-5 md:text-right">
+                <span className="col-start-2 font-mono text-ink/55 md:col-start-5 md:text-right">
                   {row.hashPrefix}
                 </span>
               )}

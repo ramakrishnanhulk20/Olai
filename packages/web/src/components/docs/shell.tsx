@@ -7,6 +7,7 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type { NavEntry } from "@/lib/docs/content";
 import { DocsSidebar } from "./sidebar";
 import { DocsSearch } from "./search";
+import styles from "./docs-chrome.module.css";
 
 export function DocsShell({ nav, children }: { nav: NavEntry[]; children: ReactNode }) {
   const pathname = usePathname();
@@ -28,7 +29,7 @@ export function DocsShell({ nav, children }: { nav: NavEntry[]; children: ReactN
   }, [open]);
 
   return (
-    <div className="relative min-h-svh bg-ground">
+    <div className={`relative min-h-svh bg-ground ${styles.chrome}`}>
       <div className="docs-grain" aria-hidden>
         <span className="film-grain" />
       </div>
@@ -98,11 +99,11 @@ export function DocsShell({ nav, children }: { nav: NavEntry[]; children: ReactN
               transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
             >
               <div className="flex items-center gap-3 border-b border-ink/10 px-4 py-3">
-                <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink/40">Docs</span>
+                <span className="font-mono text-[0.62rem] uppercase tracking-[0.2em] text-ink/60">Docs</span>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="ml-auto font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink/45 transition-colors duration-300 hover:text-ink"
+                  className="ml-auto font-mono text-[0.68rem] uppercase tracking-[0.16em] text-ink/60 transition-colors duration-300 hover:text-ink"
                 >
                   Close
                 </button>

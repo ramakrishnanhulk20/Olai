@@ -18,7 +18,7 @@ const TONE: Record<ProposalStatus, { label: string; text: string; dot: string }>
   approved: { label: "Approved", text: "text-ok", dot: "bg-ok" },
   executed: { label: "Executed", text: "text-ok", dot: "bg-ok" },
   refused: { label: "Refused", text: "text-bad", dot: "bg-bad" },
-  rejected: { label: "You said no", text: "text-ink/45", dot: "bg-ink/40" },
+  rejected: { label: "You said no", text: "text-ink/55", dot: "bg-ink/40" },
   failed: { label: "Failed", text: "text-bad", dot: "bg-bad" },
 };
 
@@ -50,7 +50,7 @@ export function SessionPicker({
     <section className="desk-panel p-5 sm:p-6">
       <header className="flex items-baseline justify-between gap-4">
         <h2 className="desk-heading">Sessions</h2>
-        <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/30">
+        <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/55">
           {replay
             ? "One recorded session"
             : sessions.length === 0
@@ -60,7 +60,7 @@ export function SessionPicker({
       </header>
 
       {sessions.length === 0 ? (
-        <p className="mt-4 text-[0.88rem] leading-[1.5] text-ink/45">
+        <p className="mt-4 text-[0.88rem] leading-[1.5] text-ink/55">
           {loading
             ? "Reading the session list."
             : "Nothing on the service yet. Ask Olai a question and it lands here."}
@@ -99,7 +99,7 @@ export function SessionPicker({
                   </span>
                   <span className="mt-1.5 flex w-full items-center justify-between gap-3 pl-[0.875rem] font-mono text-[0.62rem] uppercase tracking-[0.16em]">
                     <span className={tone.text}>{tone.label}</span>
-                    <span className="shrink-0 text-ink/30">{ago(session.createdAt)}</span>
+                    <span className="shrink-0 text-ink/55">{ago(session.createdAt)}</span>
                   </span>
                 </motion.button>
               );

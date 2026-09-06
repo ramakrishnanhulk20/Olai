@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import { useCalmEntrance } from "./use-calm-entrance";
 
 /**
  * Every field of defaultRulebook in packages/agent/src/rulebook/store.ts, written out.
@@ -35,7 +36,7 @@ const rise: Variants = {
 const flat: Variants = { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } };
 
 export function RulebookSheet() {
-  const shouldReduce = useReducedMotion() ?? false;
+  const shouldReduce = useCalmEntrance();
   const enter = shouldReduce ? flat : rise;
 
   return (
@@ -52,7 +53,7 @@ export function RulebookSheet() {
         >
           <motion.p
             variants={enter}
-            className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/45"
+            className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/55"
           >
             <span className="block size-2 rounded-[2px] bg-amber" />
             Written once, by the owner
@@ -93,7 +94,7 @@ export function RulebookSheet() {
             <h3 className="font-display text-[1.25rem] font-medium tracking-[-0.02em] text-ink">
               Olai starter rulebook
             </h3>
-            <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ink/40">
+            <span className="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-ink/55">
               version 1
             </span>
           </motion.header>
@@ -115,7 +116,7 @@ export function RulebookSheet() {
                   </dd>
                 </div>
                 {clause.note ? (
-                  <dd className="mt-1.5 max-w-[44ch] font-body text-[0.8rem] leading-[1.5] text-ink/40">
+                  <dd className="mt-1.5 max-w-[44ch] font-body text-[0.8rem] leading-[1.5] text-ink/55">
                     {clause.note}
                   </dd>
                 ) : null}

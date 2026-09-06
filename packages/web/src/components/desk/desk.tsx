@@ -145,6 +145,9 @@ export function Desk() {
 function Shell({ children }: { children: React.ReactNode }) {
   return (
     <main className="relative isolate min-h-[100svh] bg-ground pb-24">
+      {/* The screen's own name. It is in the meta row for the eye and here for a
+          screen reader, which needs the page to start at a heading. */}
+      <h1 className="sr-only">The owner&apos;s desk</h1>
       <div className="pointer-events-none fixed inset-0 -z-10" aria-hidden>
         <div
           className="absolute inset-0"
@@ -221,10 +224,9 @@ function ReplayDesk({ onOpenGate }: { onOpenGate: () => void }) {
             />
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-ink/[0.06] px-[clamp(1rem,3vw,2.75rem)] py-2 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/30">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-ink/[0.06] px-[clamp(1rem,3vw,2.75rem)] py-2 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/55">
           <span>The owner&apos;s desk</span>
           <span>Recorded run</span>
-          <span>Kill switch {OWNER_ONLY.toLowerCase()}</span>
         </div>
         <ReplayBanner onOpenGate={onOpenGate} />
       </header>
@@ -661,17 +663,18 @@ function LiveDesk({ token, lockOut }: { token: string; lockOut: () => void }) {
               killed={killed}
               busy={switchBusy}
               disabled={serviceDown}
+              offline={serviceDown}
               problem={switchProblem}
               onKill={() => void flip(true)}
               onResume={() => void flip(false)}
             />
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-ink/[0.06] px-[clamp(1rem,3vw,2.75rem)] py-2 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/30">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-ink/[0.06] px-[clamp(1rem,3vw,2.75rem)] py-2 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/55">
           <span>The owner&apos;s desk</span>
           <span>{new URL(API_BASE).host}</span>
           {health ? <span>Build {health.version}</span> : null}
-          <span className={streamLive ? "text-ok/70" : "text-ink/30"}>
+          <span className={streamLive ? "text-ok/70" : "text-ink/55"}>
             {streamLive ? "Feed live" : "Feed off"}
           </span>
         </div>

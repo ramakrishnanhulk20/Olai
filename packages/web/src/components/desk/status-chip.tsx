@@ -26,7 +26,7 @@ export function StatusChip({
     : offline
     ? { label: "No service", tone: "text-bad", dot: "bg-bad", border: "border-bad/40" }
     : health === null
-      ? { label: "Checking", tone: "text-ink/50", dot: "bg-ink/40", border: "border-ink/15" }
+      ? { label: "Checking", tone: "text-ink/55", dot: "bg-ink/40", border: "border-ink/15" }
       : health.killed
         ? { label: "Stopped", tone: "text-bad", dot: "bg-bad", border: "border-bad/40" }
         : health.dryRun

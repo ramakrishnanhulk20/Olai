@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
+import { useCalmEntrance } from "./use-calm-entrance";
 
 const tiles: Array<{ name: string; line: string; span: string; held?: boolean }> = [
   {
@@ -39,7 +40,7 @@ const rise: Variants = {
 const flat: Variants = { hidden: { opacity: 1, y: 0 }, show: { opacity: 1, y: 0 } };
 
 export function BuiltOn() {
-  const shouldReduce = useReducedMotion() ?? false;
+  const shouldReduce = useCalmEntrance();
   const enter = shouldReduce ? flat : rise;
 
   return (
@@ -54,7 +55,7 @@ export function BuiltOn() {
         className="relative z-20 grid grid-cols-12 gap-x-[clamp(1rem,2vw,2.5rem)] gap-y-[clamp(2rem,5vh,3.5rem)] px-[clamp(1.25rem,5vw,5rem)]"
       >
         <motion.div variants={enter} className="col-span-12 md:col-span-7">
-          <p className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/45">
+          <p className="flex items-center gap-3 font-mono text-[0.72rem] uppercase tracking-[0.22em] text-ink/55">
             <span className="block size-2 rounded-[2px] bg-amber" />
             What it runs on
           </p>

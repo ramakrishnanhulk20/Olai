@@ -1,6 +1,6 @@
 # ATTACK-13: a CORS preflight from https://evil.example
 
-Captured on 2026-09-06T12:12:35.109Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T14:59:29.810Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that another site cannot call this API. CORS is enforced by browsers, not by the server. Anything holding the owner token can call it from anywhere, which is why the token is the real control.
@@ -12,7 +12,7 @@ Expected outcome, from docs/security/threat-model.md section 5: no Access-Contro
 What we tried:
 
 ```
-OPTIONS http://127.0.0.1:55077/api/rulebook
+OPTIONS http://127.0.0.1:62498/api/rulebook
 origin: https://evil.example
 access-control-request-method: PUT
 access-control-request-headers: authorization, content-type
@@ -38,7 +38,7 @@ What we tried:
 ```
 The same preflight from the one origin the config does allow, for contrast:
 
-OPTIONS http://127.0.0.1:55077/api/rulebook
+OPTIONS http://127.0.0.1:62498/api/rulebook
 origin: http://localhost:3000
 access-control-request-method: PUT
 access-control-request-headers: authorization, content-type
@@ -65,7 +65,7 @@ What we tried:
 ```
 A real read from the same origin, with the owner token, to show what CORS does and does not do:
 
-GET http://127.0.0.1:55077/api/rulebook
+GET http://127.0.0.1:62498/api/rulebook
 origin: https://evil.example
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```

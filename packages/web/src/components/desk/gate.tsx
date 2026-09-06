@@ -128,7 +128,7 @@ export function Gate({
           </motion.p>
         ) : null}
 
-        <motion.p variants={enter} className="mt-8 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink/40">
+        <motion.p variants={enter} className="mt-8 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-ink/55">
           Set OLAI_OWNER_TOKEN in .env, it starts with ol.
         </motion.p>
       </motion.div>

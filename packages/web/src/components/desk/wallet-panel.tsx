@@ -63,7 +63,7 @@ export function WalletPanel({
       <section className="desk-panel p-6">
         <header className="flex items-baseline justify-between gap-4">
           <h2 className="desk-heading">Wallet</h2>
-          <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/35">
+          <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-ink/55">
             Not shown in replay
           </span>
         </header>
@@ -122,7 +122,7 @@ export function WalletPanel({
               <div className="desk-meter mt-3" aria-hidden>
                 <span style={{ width: `${Math.min(100, Math.round(used * 100))}%` }} />
               </div>
-              <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-ink/40">
+              <p className="mt-2 font-mono text-[0.68rem] uppercase tracking-[0.14em] text-ink/55">
                 {usd(spent)} of {usd(settings.x402DailyLimit)} x402 limit
               </p>
             </div>
@@ -131,7 +131,7 @@ export function WalletPanel({
           <div>
             <p className="desk-label">Balances</p>
             {wallet.balances.length === 0 ? (
-              <p className="mt-2 text-[0.85rem] text-ink/50">
+              <p className="mt-2 text-[0.85rem] text-ink/55">
                 Nothing in the wallet yet. Fund it in the Binance app.
               </p>
             ) : (
@@ -146,7 +146,7 @@ export function WalletPanel({
                     </span>
                     <span className="text-right">
                       <span className="block font-mono text-[0.85rem] text-ink">{balance.balance}</span>
-                      <span className="block font-mono text-[0.68rem] text-ink/40">
+                      <span className="block font-mono text-[0.68rem] text-ink/55">
                         {usd(Number.parseFloat(balance.balanceUsd))}
                       </span>
                     </span>
