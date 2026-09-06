@@ -209,7 +209,7 @@ What an attacker could take or break, and why each one matters.
   so there is nothing on it for a browser bug to leak.
 
 - **Binance's own controls (outside Olai's code, relied upon).** From
-  `docs/RD-BRIEF.md` and `INTAKE.md`: no withdrawal scope exists for the MCP server;
+  Binance's own documentation: no withdrawal scope exists for the MCP server;
   the Agentic sub-account is walled off from the owner's main account (the agent
   cannot pull funds in); the Agentic Wallet has a daily limit and a separate x402 daily
   limit set only in the Binance app (`wallet settings`, read in
@@ -333,7 +333,7 @@ What an attacker could take or break, and why each one matters.
 
 This threat model is self-audited by the project's own builder cook, reading every
 file under `packages/agent/src` line by line against the running rulebook, ledger,
-session, and x402 code, plus `PLAN.md`, `INTAKE.md`, and `docs/RD-BRIEF.md`. No
+session, and x402 code, plus Binance's Agent OS documentation. No
 external security firm, and no automated static-analysis tool (Slither, Semgrep, or
 similar), has reviewed this code as of this writing. What would change with a
 third-party audit: independent verification that the rulebook engine's refusal logic

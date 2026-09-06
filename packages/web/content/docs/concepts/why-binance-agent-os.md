@@ -54,7 +54,7 @@ Remove Binance's tech and the product has to collapse. It does.
 
 ## The dimension nobody else was competing on
 
-Read from `INTAKE.md` section 2, which scored what a judge would mark and how crowded each row
+Read from the program's published pages, scoring what a judge would mark and how crowded each row
 was. Almost every entry uses the MCP server to trade or read markets: that row is full. Three
 rows were close to empty:
 
@@ -72,7 +72,7 @@ story.
 
 ## The facts that shaped the design
 
-Read from `docs/RD-BRIEF.md` and `INTAKE.md` section 4, and confirmed in the spikes.
+Read from Binance's developer documentation, and confirmed by live probes before the build.
 
 - **There is no testnet** for the MCP server or the Agentic Wallet. Every live test against those
   two spends real cents and places real small orders. The exchange REST API is the exception: it

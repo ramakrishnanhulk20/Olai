@@ -7,7 +7,7 @@ description: Clone Olai, fill in .env, connect the Binance MCP server and the Ag
 # Quick start
 
 Everything on this page is read from the repository: `.env.example` in the root,
-`spikes/wallet/RESULT.md`, `docs/RD-BRIEF.md` section 2, and `packages/agent/src/config.ts`.
+Binance's Agentic Wallet documentation and `packages/agent/src/config.ts`.
 
 You need Node 22 or newer. The repository pins it in `.nvmrc`.
 
@@ -82,7 +82,7 @@ until Binance opens the door, or read [The MCP client](../developers/mcp-client.
 curiosity.
 
 There is a path that does not involve Olai's own client at all, and it is the one Binance
-documents for its own users (`docs/RD-BRIEF.md` section 2). It is worth running once to prove
+documents for its own users. It is worth running once to prove
 your account can trade through the MCP server, since it goes through Binance's own allowlisted
 agent rather than Olai's:
 
@@ -98,7 +98,7 @@ off Binance.
 
 The `baw` CLI drives Olai's on-chain wallet. Olai holds no key material itself: every wallet
 call goes through the CLI (`packages/agent/src/x402/baw.ts`). The commands below are the exact
-ones recorded in `spikes/wallet/RESULT.md`.
+ones a first sign-in produces.
 
 Install the skill and the CLI:
 

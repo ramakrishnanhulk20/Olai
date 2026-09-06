@@ -15,7 +15,7 @@ telling you otherwise is reading a different project.
 What "self-audited" means here, precisely:
 
 1. **Every file under `packages/agent/src` was read line by line** against the running rulebook,
-   ledger, session and x402 code, alongside `PLAN.md`, `INTAKE.md` and `docs/RD-BRIEF.md`. The
+   ledger, session and x402 code, alongside Binance's Agent OS documentation. The
    result is the [threat model](./threat-model.md): assets, attackers, every entry point, the
    controls mapped to the exact function that implements each one, and the weaknesses we did not
    fix.

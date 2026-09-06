@@ -21,3 +21,12 @@ spikes/wallet/.agents/
 spikes/wallet/.claude/
 spikes/wallet/skills-lock.json
 docs/site/build/
+
+# Working files, local only
+INTAKE.md
+PLAN.md
+STATE.md
+DECISIONS.md
+docs/RD-BRIEF.md
+docs/submission/
+spikes/

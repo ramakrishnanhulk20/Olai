@@ -236,7 +236,7 @@ Each of these has an executed script and saved output. See [Audits](./audits.md)
 
 This threat model is self-audited by the project's own builder, reading every file under
 `packages/agent/src` line by line against the running rulebook, ledger, session and x402 code,
-plus `PLAN.md`, `INTAKE.md` and `docs/RD-BRIEF.md`. No external security firm and no automated
+plus Binance's Agent OS documentation. No external security firm and no automated
 static-analysis tool has reviewed this code as of this writing.
 
 What would change with a third-party audit: independent verification that the rulebook engine's
