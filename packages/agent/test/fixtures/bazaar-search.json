@@ -1,0 +1,93 @@
+{
+    "code": "000000",
+    "message": null,
+    "messageDetail": null,
+    "data": {
+        "resources": [
+            {
+                "resource": "https://api.nansen.ai/api/v1/profiler/address/current-balance",
+                "type": "http",
+                "x402Version": 2,
+                "description": "https://api.nansen.ai/api/v1/profiler/address/current-balance",
+                "accepts": [
+                    {
+                        "scheme": "permit2-exact",
+                        "network": "eip155:56",
+                        "asset": "0x55d398326f99059fF775485246999027B3197955",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x93053f1e7A5eFEDa532Fe69CbbE43cBEc3A0F13f"
+                    }
+                ],
+                "lastUpdated": 1788514484324
+            },
+            {
+                "resource": "https://taxpulse.theaslangroupllc.com/api/crypto/wallet-snapshot",
+                "type": "http",
+                "x402Version": 2,
+                "description": "Wallet snapshot: deterministic on-chain stats for one address across major EVM chains \u00e2\u20ac\u201d transaction count, token-transfer count, wallet age (first-tx date), native balance, account type, and risk-flag count. Lite-tier preview (agent-cap friendly); no investigation narrative or approval enumeration. 100% deterministic, no LLM.",
+                "accepts": [
+                    {
+                        "scheme": "eip3009",
+                        "network": "eip155:56",
+                        "asset": "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+                        "maxAmountRequired": "250000000000000000",
+                        "payTo": "0x50ab2018c06c6E4eAA9BA52057Eb55eD284912fc"
+                    }
+                ],
+                "lastUpdated": 1787408499431
+            },
+            {
+                "resource": "https://fieldpulse.theaslangroupllc.com/api/commodity-outlook",
+                "type": "http",
+                "x402Version": 2,
+                "description": "Agricultural commodity market outlook for grower and ag-trader agents. Synthesizes USDA WASDE and FAO data, futures price context, supply/demand balance, and exporter/importer outlooks for any crop.",
+                "accepts": [
+                    {
+                        "scheme": "eip3009",
+                        "network": "eip155:56",
+                        "asset": "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+                        "maxAmountRequired": "100000000000000000",
+                        "payTo": "0x50ab2018c06c6E4eAA9BA52057Eb55eD284912fc"
+                    }
+                ],
+                "lastUpdated": 1787408316764
+            },
+            {
+                "resource": "https://debtpulse.theaslangroupllc.com/api/debt/consolidate",
+                "type": "http",
+                "x402Version": 2,
+                "description": "Debt consolidation calculator: personal loan vs balance transfer vs HELOC. Compares all options with specific lender recommendations and live rate context, tailored by credit score and country. For debt-relief and personal-finance agents.",
+                "accepts": [
+                    {
+                        "scheme": "eip3009",
+                        "network": "eip155:56",
+                        "asset": "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+                        "maxAmountRequired": "100000000000000000",
+                        "payTo": "0x50ab2018c06c6E4eAA9BA52057Eb55eD284912fc"
+                    }
+                ],
+                "lastUpdated": 1787408286893
+            },
+            {
+                "resource": "https://api.bortagent.xyz/api/credits/topup?bundle=0",
+                "type": "http",
+                "x402Version": 2,
+                "description": "Prepaid LLM credits for BORT Brain, bought in one payment and spent over many calls. Pay once in $U on BNB Chain and receive a credit balance, then sign once at POST /api/credits/key for an API key and call POST /api/credits/v1/chat/completions with any OpenAI-compatible client. Because the payment settles once rather than per request, a single small call is not dominated by settlement cost the way pay-per-call is. Credits are held against the paying wallet and are shared by every agent that wal",
+                "accepts": [
+                    {
+                        "scheme": "eip3009",
+                        "network": "eip155:56",
+                        "asset": "0xcE24439F2D9C6a2289F741120FE202248B666666",
+                        "maxAmountRequired": "5000000000000000000",
+                        "payTo": "0x54E5651a7f62859CcCB5B75613165a69C24ECb4e"
+                    }
+                ],
+                "lastUpdated": 1787244922517
+            }
+        ],
+        "searchMethod": "keyword",
+        "partialResults": false,
+        "x402Version": 2
+    },
+    "success": true
+}

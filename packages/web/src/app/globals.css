@@ -1,0 +1,522 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ground: #0a0a0a;
+  --color-ink: #f2efe8;
+  --color-amber: #f5a524;
+  --color-ok: #4fe6d2;
+  --color-warn: #7aa2ff;
+  --color-bad: #ff5c7a;
+  --radius-control: 8px;
+}
+
+@theme inline {
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+}
+
+html {
+  background-color: var(--color-ground);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-amber);
+  color: var(--color-ground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 3px;
+}
+
+/* Lenis needs the page to size itself and native smooth scrolling to stay out of the way. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+/* Film grain. The noise is generated in the file, so nothing is fetched from anywhere. */
+.film-grain {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 240px 240px;
+  mix-blend-mode: overlay;
+  will-change: transform;
+  animation: grain-drift 1.4s steps(4) infinite;
+}
+
+@keyframes grain-drift {
+  0% { transform: translate3d(0, 0, 0); }
+  25% { transform: translate3d(-3%, 2%, 0); }
+  50% { transform: translate3d(2%, -3%, 0); }
+  75% { transform: translate3d(-2%, -2%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* The hero still lags the page by the amount the rAF loop writes into --hero-shift,
+   which leaves it travelling at 0.6 of the scroll speed. */
+.hero-still {
+  transform: translate3d(0, var(--hero-shift, 0px), 0) scale(1.14);
+  will-change: transform;
+}
+
+/* The pinned ledger. ScrollTrigger writes --p on the section once a frame and the rows
+   are revealed from it here, so nothing in React renders while the page is moving.
+   The default is 1, which is every row already in place: that is what mobile, reduced
+   motion and a page without JavaScript get. */
+.ledger-stack {
+  --p: 1;
+}
+
+@media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .ledger-stack {
+    --p: 0;
+  }
+}
+
+.ledger-row {
+  --reveal: clamp(0, calc((var(--p) * var(--rows) - var(--i)) * 1.6), 1);
+  opacity: calc(0.05 + var(--reveal) * 0.95);
+  transform: translate3d(calc((1 - var(--reveal)) * -8px), 0, 0);
+  will-change: opacity, transform;
+}
+
+/* The row is wiped in from the left, which is what reads as typing. */
+.ledger-type {
+  clip-path: inset(0 calc((1 - var(--reveal)) * 100%) 0 -0.1em);
+}
+
+.ledger-caret {
+  position: absolute;
+  top: 0.1em;
+  bottom: 0.05em;
+  left: calc(var(--reveal) * 100%);
+  width: 2px;
+  background: var(--color-amber);
+  opacity: calc(var(--reveal) * (1 - var(--reveal)) * 7);
+}
+
+.ledger-row--settled {
+  background: linear-gradient(90deg, rgba(245, 165, 36, 0.1), rgba(245, 165, 36, 0) 62%);
+  box-shadow: inset 2px 0 0 0 var(--color-amber);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .film-grain {
+    animation: none;
+  }
+
+  .hero-still {
+    transform: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* desk */
+
+.desk-panel {
+  position: relative;
+  border-radius: 12px;
+  border: 1px solid rgba(242, 239, 232, 0.09);
+  background: linear-gradient(
+    180deg,
+    rgba(242, 239, 232, 0.045),
+    rgba(242, 239, 232, 0.012) 24%,
+    rgba(242, 239, 232, 0.004)
+  );
+  box-shadow: 0 24px 60px -40px rgba(0, 0, 0, 0.9);
+}
+
+/* The glare a light source leaves across the top edge of a card. */
+.desk-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(242, 239, 232, 0) 0%,
+    rgba(242, 239, 232, 0.28) 22%,
+    rgba(245, 165, 36, 0.35) 52%,
+    rgba(242, 239, 232, 0) 100%
+  );
+  pointer-events: none;
+}
+
+.desk-heading {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.desk-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: rgba(242, 239, 232, 0.4);
+}
+
+.desk-figure {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  letter-spacing: -0.035em;
+  line-height: 1;
+  color: var(--color-ink);
+}
+
+.desk-input {
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(242, 239, 232, 0.14);
+  background: rgba(10, 10, 10, 0.6);
+  padding: 0.7rem 0.85rem;
+  color: var(--color-ink);
+  font-size: 0.9rem;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.desk-input::placeholder {
+  color: rgba(242, 239, 232, 0.25);
+}
+
+.desk-input:hover:not(:disabled) {
+  border-color: rgba(242, 239, 232, 0.28);
+}
+
+.desk-input:focus {
+  border-color: var(--color-amber);
+  outline: none;
+  background: rgba(10, 10, 10, 0.85);
+}
+
+.desk-input:disabled {
+  opacity: 0.5;
+}
+
+select.desk-input {
+  appearance: none;
+  cursor: pointer;
+}
+
+select.desk-input option {
+  background: #101010;
+  color: var(--color-ink);
+}
+
+.desk-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(242, 239, 232, 0.16);
+  padding: 0.35rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  color: rgba(242, 239, 232, 0.8);
+  transition: border-color 0.25s ease;
+}
+
+.desk-chip:hover {
+  border-color: rgba(242, 239, 232, 0.34);
+}
+
+.desk-filter {
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(242, 239, 232, 0.12);
+  padding: 0.3rem 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(242, 239, 232, 0.45);
+  transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.desk-filter:hover {
+  color: var(--color-ink);
+  border-color: rgba(242, 239, 232, 0.32);
+}
+
+.desk-filter.is-on {
+  color: var(--color-ground);
+  background: var(--color-amber);
+  border-color: var(--color-amber);
+}
+
+/* One session in the picker: a chip on a phone, a row on a desk. */
+.desk-session {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  width: 13.5rem;
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(242, 239, 232, 0.1);
+  background: rgba(10, 10, 10, 0.45);
+  padding: 0.6rem 0.7rem;
+  text-align: left;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.desk-session:hover {
+  border-color: rgba(242, 239, 232, 0.28);
+  background: rgba(242, 239, 232, 0.04);
+}
+
+.desk-session.is-picked {
+  border-color: rgba(245, 165, 36, 0.55);
+  background: rgba(245, 165, 36, 0.08);
+  box-shadow: inset 2px 0 0 var(--color-amber);
+}
+
+@media (min-width: 640px) {
+  .desk-session {
+    width: 100%;
+  }
+}
+
+.desk-button-amber {
+  border-radius: var(--radius-control);
+  background: var(--color-amber);
+  color: var(--color-ground);
+  font-weight: 600;
+  transition: filter 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+
+.desk-button-amber:hover:not(:disabled) {
+  filter: brightness(1.1);
+  box-shadow: 0 0 38px -8px rgba(245, 165, 36, 0.65);
+}
+
+.desk-button-amber:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.desk-button-quiet {
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(242, 239, 232, 0.28);
+  color: var(--color-ink);
+  font-weight: 600;
+  transition: border-color 0.3s ease, background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.desk-button-quiet:hover:not(:disabled) {
+  border-color: var(--color-ink);
+  background: rgba(242, 239, 232, 0.05);
+}
+
+.desk-button-quiet:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.desk-button-bad {
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(255, 92, 122, 0.5);
+  color: var(--color-bad);
+  font-weight: 600;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.desk-button-bad:hover:not(:disabled) {
+  background: rgba(255, 92, 122, 0.1);
+  border-color: var(--color-bad);
+}
+
+/* The kill switch. Built to look like a thing you push, not a checkbox. */
+.desk-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 4.4rem;
+  height: 2.1rem;
+  padding: 0.22rem;
+  border-radius: 10px;
+  border: 1px solid rgba(242, 239, 232, 0.16);
+  background: rgba(10, 10, 10, 0.9);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.75);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.desk-toggle.is-on {
+  border-color: rgba(245, 165, 36, 0.6);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), 0 0 26px -10px rgba(245, 165, 36, 0.9);
+}
+
+.desk-toggle.is-off {
+  border-color: rgba(255, 92, 122, 0.5);
+}
+
+.desk-toggle.is-busy {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.desk-toggle-knob {
+  display: block;
+  width: 1.9rem;
+  height: 1.5rem;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(242, 239, 232, 0.9), rgba(242, 239, 232, 0.55));
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+}
+
+.desk-toggle.is-on .desk-toggle-knob {
+  margin-left: auto;
+  background: linear-gradient(180deg, #ffc766, var(--color-amber));
+}
+
+.desk-mini-toggle {
+  display: inline-flex;
+  align-items: center;
+  width: 2.4rem;
+  height: 1.3rem;
+  padding: 0.15rem;
+  border-radius: 8px;
+  border: 1px solid rgba(242, 239, 232, 0.16);
+  background: rgba(10, 10, 10, 0.8);
+  transition: border-color 0.3s ease;
+}
+
+.desk-mini-toggle.is-on {
+  border-color: rgba(245, 165, 36, 0.6);
+}
+
+.desk-mini-knob {
+  display: block;
+  width: 0.95rem;
+  height: 0.95rem;
+  border-radius: 5px;
+  background: rgba(242, 239, 232, 0.55);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.28s ease;
+}
+
+.desk-mini-toggle.is-on .desk-mini-knob {
+  transform: translateX(1.05rem);
+  background: var(--color-amber);
+}
+
+.desk-meter {
+  position: relative;
+  height: 3px;
+  width: 100%;
+  border-radius: 2px;
+  background: rgba(242, 239, 232, 0.1);
+  overflow: hidden;
+}
+
+.desk-meter > span {
+  display: block;
+  height: 100%;
+  background: var(--color-amber);
+}
+
+.desk-skeleton {
+  border-radius: var(--radius-control);
+  background: linear-gradient(
+    90deg,
+    rgba(242, 239, 232, 0.05),
+    rgba(242, 239, 232, 0.1),
+    rgba(242, 239, 232, 0.05)
+  );
+  background-size: 240% 100%;
+  animation: desk-shimmer 1.8s ease-in-out infinite;
+}
+
+@keyframes desk-shimmer {
+  0% { background-position: 120% 0; }
+  100% { background-position: -120% 0; }
+}
+
+/* The honest wait. It moves for as long as Olai is actually working. */
+.desk-wait {
+  height: 2px;
+  width: 100%;
+  overflow: hidden;
+  background: rgba(242, 239, 232, 0.08);
+}
+
+.desk-wait > span {
+  display: block;
+  height: 100%;
+  width: 35%;
+  background: var(--color-amber);
+  animation: desk-sweep 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes desk-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(320%); }
+}
+
+.desk-scroll {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(242, 239, 232, 0.18) transparent;
+}
+
+.desk-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.desk-scroll::-webkit-scrollbar-thumb {
+  background: rgba(242, 239, 232, 0.16);
+  border-radius: 3px;
+}
+
+.desk-json {
+  max-height: 18rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: rgba(242, 239, 232, 0.6);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-skeleton,
+  .desk-wait > span {
+    animation: none;
+  }
+}

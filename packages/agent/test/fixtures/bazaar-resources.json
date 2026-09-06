@@ -1,0 +1,99 @@
+{
+    "code": "000000",
+    "message": null,
+    "messageDetail": null,
+    "data": {
+        "items": [
+            {
+                "resource": "https://pro.cournot.ai/intelligence/v1/probability",
+                "type": "http",
+                "x402Version": 2,
+                "description": "Fair probability for a prediction-market event. Send a plain-language question; returns Cournot's own probability estimate alongside the venue's current price and the sources behind it \u00e2\u20ac\u201d quotes from multiple prediction-market venues combined with independent market data. Abstains without charging when no market matches or the inputs are too thin to support an estimate.",
+                "accepts": [
+                    {
+                        "scheme": "eip3009",
+                        "network": "eip155:56",
+                        "asset": "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0xA8b2c2594eC5774479749d26105C9FB6CDcA1d68"
+                    }
+                ],
+                "lastUpdated": 1788641114421
+            },
+            {
+                "resource": "https://api.nansen.ai/api/v1/profiler/address/current-balance",
+                "type": "http",
+                "x402Version": 2,
+                "description": "https://api.nansen.ai/api/v1/profiler/address/current-balance",
+                "accepts": [
+                    {
+                        "scheme": "permit2-exact",
+                        "network": "eip155:56",
+                        "asset": "0x55d398326f99059fF775485246999027B3197955",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x93053f1e7A5eFEDa532Fe69CbbE43cBEc3A0F13f"
+                    }
+                ],
+                "lastUpdated": 1788514484324
+            },
+            {
+                "resource": "https://pro-api.coinmarketcap.com/x402/v1/dex/search",
+                "type": "http",
+                "x402Version": 2,
+                "description": "https://pro-api.coinmarketcap.com/x402/v1/dex/search",
+                "accepts": [
+                    {
+                        "scheme": "permit2-exact",
+                        "network": "eip155:56",
+                        "asset": "0x55d398326f99059fF775485246999027B3197955",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x3C5f3a6cE224BB89D72f5EB4232ecC27F67B3eeA"
+                    },
+                    {
+                        "scheme": "eip3009",
+                        "network": "eip155:56",
+                        "asset": "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x3C5f3a6cE224BB89D72f5EB4232ecC27F67B3eeA"
+                    },
+                    {
+                        "scheme": "eip3009",
+                        "network": "eip155:56",
+                        "asset": "0xcE24439F2D9C6a2289F741120FE202248B666666",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x3C5f3a6cE224BB89D72f5EB4232ecC27F67B3eeA"
+                    },
+                    {
+                        "scheme": "permit2-exact",
+                        "network": "eip155:56",
+                        "asset": "0x8d0D000Ee44948FC98c9B98A4FA4921476f08B0d",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x3C5f3a6cE224BB89D72f5EB4232ecC27F67B3eeA"
+                    },
+                    {
+                        "scheme": "permit2-exact",
+                        "network": "eip155:56",
+                        "asset": "0xcE24439F2D9C6a2289F741120FE202248B666666",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x3C5f3a6cE224BB89D72f5EB4232ecC27F67B3eeA"
+                    },
+                    {
+                        "scheme": "permit2-exact",
+                        "network": "eip155:56",
+                        "asset": "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+                        "maxAmountRequired": "10000000000000000",
+                        "payTo": "0x3C5f3a6cE224BB89D72f5EB4232ecC27F67B3eeA"
+                    }
+                ],
+                "lastUpdated": 1788354855904
+            }
+        ],
+        "pagination": {
+            "limit": 3,
+            "offset": 0,
+            "total": 979
+        },
+        "x402Version": 2
+    },
+    "success": true
+}

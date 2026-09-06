@@ -1,0 +1,126 @@
+[
+  {
+    "seq": 19,
+    "ts": "2026-09-06T10:23:58.974Z",
+    "kind": "payment.signed",
+    "actor": "agent",
+    "hashPrefix": "f0e13d120567",
+    "summary": "About to sign one payment of $0.0100 for https://api.nansen.ai/api/v1/profiler/address/current-balance",
+    "costUsd": 0.01
+  },
+  {
+    "seq": 20,
+    "ts": "2026-09-06T10:24:03.572Z",
+    "kind": "payment.settled",
+    "actor": "merchant",
+    "hashPrefix": "9fc2129e87b7",
+    "summary": "Paid $0.0100 to https://api.nansen.ai/api/v1/profiler/address/current-balance",
+    "costUsd": 0.01,
+    "txHash": "0x6962ad36ff991759c5801254aefaba68f8041a401f5a57b022a66976750f4335"
+  },
+  {
+    "seq": 51,
+    "ts": "2026-09-06T10:54:08.685Z",
+    "kind": "question",
+    "actor": "owner",
+    "hashPrefix": "101ba7175575",
+    "summary": "I want to add about 15 dollars of ETH before the weekend. Is the order book healthy enough right now, and what do Binance exchange wallet balances on-chain say about flows? If it looks fine, propose the buy."
+  },
+  {
+    "seq": 53,
+    "ts": "2026-09-06T10:54:14.396Z",
+    "kind": "note",
+    "actor": "binance",
+    "hashPrefix": "b120c773ca04",
+    "summary": "ETHUSDT 1h: 48 candles, -1.03% across the window"
+  },
+  {
+    "seq": 54,
+    "ts": "2026-09-06T10:54:14.598Z",
+    "kind": "note",
+    "actor": "binance",
+    "hashPrefix": "80268825a423",
+    "summary": "ETHUSDT at 2500.5, 1.836% over 24 hours"
+  },
+  {
+    "seq": 55,
+    "ts": "2026-09-06T10:54:14.601Z",
+    "kind": "note",
+    "actor": "binance",
+    "hashPrefix": "9d3aef2de7b9",
+    "summary": "ETHUSDT book: best bid 2500.49, best ask 2500.5"
+  },
+  {
+    "seq": 56,
+    "ts": "2026-09-06T10:54:14.914Z",
+    "kind": "note",
+    "actor": "binance",
+    "hashPrefix": "43ea10f07507",
+    "summary": "Account: 504 balances, 476 open positions"
+  },
+  {
+    "seq": 57,
+    "ts": "2026-09-06T10:54:21.895Z",
+    "kind": "discovery",
+    "actor": "agent",
+    "hashPrefix": "3243b1618d49",
+    "summary": "Bazaar search \"Binance exchange wallet on-chain ETH balance flows\" under $0.05: 4 payable results"
+  },
+  {
+    "seq": 59,
+    "ts": "2026-09-06T10:54:27.368Z",
+    "kind": "payment.preview",
+    "actor": "agent",
+    "hashPrefix": "20e8dab5a9b8",
+    "summary": "About to pay up to $0.01 for https://api.nansen.ai/api/v1/profiler/address/current-balance",
+    "costUsd": 0.01
+  },
+  {
+    "seq": 60,
+    "ts": "2026-09-06T10:54:29.005Z",
+    "kind": "note",
+    "actor": "binance",
+    "hashPrefix": "a1b47af200ec",
+    "summary": "The wallet refused to pay https://api.nansen.ai/api/v1/profiler/address/current-balance: this call costs $0.0100, over t"
+  },
+  {
+    "seq": 61,
+    "ts": "2026-09-06T10:55:05.026Z",
+    "kind": "proposal",
+    "actor": "agent",
+    "hashPrefix": "e99a7f39137c",
+    "summary": "ETH book is healthy: 1 cent spread and roughly $250k on the top ask, so $15 is a non-event. I could not buy the on-chain exchange flow data, so this rests on market data alone."
+  },
+  {
+    "seq": 63,
+    "ts": "2026-09-06T10:55:05.889Z",
+    "kind": "proposal",
+    "actor": "agent",
+    "hashPrefix": "8af09f4c1888",
+    "summary": "Proposal passed the rulebook and is waiting for the owner"
+  },
+  {
+    "seq": 65,
+    "ts": "2026-09-06T11:12:39.416Z",
+    "kind": "approval",
+    "actor": "owner",
+    "hashPrefix": "f5a5f5db98a8",
+    "summary": "Owner approved BUY ETHUSDT"
+  },
+  {
+    "seq": 66,
+    "ts": "2026-09-06T11:12:39.416Z",
+    "kind": "order.sent",
+    "actor": "agent",
+    "hashPrefix": "8691959aa2ac",
+    "summary": "Sent BUY ETHUSDT for 15 USD"
+  },
+  {
+    "seq": 67,
+    "ts": "2026-09-06T11:12:39.746Z",
+    "kind": "order.filled",
+    "actor": "binance",
+    "hashPrefix": "2c3a16fafd81",
+    "summary": "FILLED: 0.0059 ETHUSDT for 14.757611 USD"
+  }
+]

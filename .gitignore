@@ -1,0 +1,23 @@
+node_modules/
+.next/
+.next-verify/
+dist/
+.env
+.env.*
+!.env.example
+reference/
+spikes/**/.tokens.json
+*.log
+.DS_Store
+
+# Local SQLite ledger and any test databases
+data/
+
+# Vitest coverage output
+coverage/
+spikes/**/*-output.json
+spikes/**/nansen-402.json
+spikes/wallet/.agents/
+spikes/wallet/.claude/
+spikes/wallet/skills-lock.json
+docs/site/build/

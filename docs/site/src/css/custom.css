@@ -1,0 +1,131 @@
+/**
+ * Near-black paper, off-white ink, one warm amber that does every piece of
+ * decorative work. Docusaurus ships a green accent; every green variable it
+ * defines is overridden below so none of it survives.
+ */
+
+:root {
+  --olai-amber: #f5a524;
+  --olai-amber-bright: #ffbc4d;
+  --olai-amber-deep: #c47f14;
+  --olai-ink: #f2f0ec;
+  --olai-ink-soft: #b9b5ad;
+  --olai-paper: #0b0b0c;
+  --olai-paper-raised: #141416;
+  --olai-rule: #262629;
+
+  --ifm-color-primary: var(--olai-amber);
+  --ifm-color-primary-dark: #ef9a0c;
+  --ifm-color-primary-darker: #e2920b;
+  --ifm-color-primary-darkest: var(--olai-amber-deep);
+  --ifm-color-primary-light: #f7b043;
+  --ifm-color-primary-lighter: #f8b752;
+  --ifm-color-primary-lightest: var(--olai-amber-bright);
+
+  --ifm-code-font-size: 92%;
+  --ifm-font-size-base: 17px;
+  --ifm-line-height-base: 1.65;
+  --ifm-heading-font-weight: 650;
+  --ifm-h1-font-size: 2.6rem;
+  --ifm-global-radius: 8px;
+  --ifm-button-border-radius: 8px;
+  --ifm-link-hover-decoration: underline;
+  --docusaurus-highlighted-code-line-bg: rgba(245, 165, 36, 0.14);
+}
+
+/* The site is dark first. Light mode is kept honest rather than pretty. */
+[data-theme='light'] {
+  --ifm-color-primary: var(--olai-amber-deep);
+  --ifm-color-primary-dark: #b0720f;
+  --ifm-color-primary-darker: #9c650d;
+  --ifm-color-primary-darkest: #7e520a;
+  --ifm-color-primary-light: #d68e20;
+  --ifm-color-primary-lighter: #e29a2b;
+  --ifm-color-primary-lightest: var(--olai-amber);
+  --docusaurus-highlighted-code-line-bg: rgba(196, 127, 20, 0.16);
+}
+
+[data-theme='dark'] {
+  --ifm-background-color: var(--olai-paper);
+  --ifm-background-surface-color: var(--olai-paper-raised);
+  --ifm-navbar-background-color: rgba(11, 11, 12, 0.86);
+  --ifm-footer-background-color: #08080a;
+  --ifm-font-color-base: var(--olai-ink);
+  --ifm-heading-color: var(--olai-ink);
+  --ifm-toc-border-color: var(--olai-rule);
+  --ifm-hr-border-color: var(--olai-rule);
+  --ifm-table-border-color: var(--olai-rule);
+  --ifm-table-stripe-background: rgba(255, 255, 255, 0.02);
+  --ifm-code-background: rgba(245, 165, 36, 0.1);
+  --ifm-blockquote-color: var(--olai-ink-soft);
+  --ifm-menu-color: var(--olai-ink-soft);
+  --ifm-menu-color-background-active: rgba(245, 165, 36, 0.1);
+  --ifm-menu-color-background-hover: rgba(245, 165, 36, 0.07);
+  --docusaurus-highlighted-code-line-bg: rgba(245, 165, 36, 0.18);
+}
+
+[data-theme='dark'] .navbar {
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--olai-rule);
+  box-shadow: none;
+}
+
+[data-theme='dark'] .menu__link--active {
+  color: var(--olai-amber);
+}
+
+/* The one motif: a filled square, the same mark as the logo and the favicon. */
+.markdown h2::before {
+  content: '';
+  display: inline-block;
+  width: 0.42em;
+  height: 0.42em;
+  margin-right: 0.5em;
+  vertical-align: 0.06em;
+  background-color: var(--olai-amber);
+}
+
+.markdown h1 {
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+}
+
+.markdown h2 {
+  letter-spacing: -0.01em;
+  margin-top: 2.4rem;
+}
+
+.markdown table {
+  display: table;
+  width: 100%;
+}
+
+.markdown table th {
+  text-align: left;
+  font-weight: 650;
+}
+
+[data-theme='dark'] .markdown table thead tr {
+  border-bottom: 2px solid var(--olai-amber);
+}
+
+.theme-doc-markdown a:hover {
+  color: var(--olai-amber-bright);
+}
+
+/* Mermaid diagrams are wide. Let them scroll rather than shrink to unreadable. */
+.docusaurus-mermaid-container {
+  overflow-x: auto;
+}
+
+@media (max-width: 996px) {
+  :root {
+    --ifm-h1-font-size: 2rem;
+    --ifm-font-size-base: 16px;
+  }
+
+  .markdown table {
+    display: block;
+    overflow-x: auto;
+  }
+}

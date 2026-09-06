@@ -1,0 +1,41 @@
+{
+  "name": "@olai/agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Olai's service: the agent loop, the rulebook, the ledger and the local HTTP API",
+  "type": "module",
+  "main": "dist/src/index.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:fuzz": "vitest run property.test",
+    "probe:bazaar": "tsx scripts/probe-bazaar.ts",
+    "probe:exchange": "tsx scripts/probe-exchange.ts",
+    "dry-run": "tsx scripts/dry-run.ts",
+    "prove": "tsx scripts/prove.ts",
+    "attacks": "tsx attacks/run.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "0.124.0",
+    "@hono/node-server": "2.1.1",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "better-sqlite3": "13.0.3",
+    "execa": "10.0.1",
+    "hono": "4.13.7",
+    "pino": "10.3.1",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "9.6.0",
+    "@types/node": "26.4.1",
+    "fast-check": "4.9.0",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2",
+    "vitest": "5.0.0"
+  }
+}
