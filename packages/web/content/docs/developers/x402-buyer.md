@@ -26,9 +26,9 @@ non-200 responses throw the same error type with `NETWORK` or `HTTP_<status>`.
 
 Two decisions in that file are worth knowing about.
 
-**The price filter runs on our side.** The Bazaar has its own `maxUsdPrice` parameter, and on
-2026-09-06 it returned an empty list for every value tried, including values far above the most
-expensive listing. Relying on it would make Olai believe there is nothing it can afford, so the
+**The price filter runs on our side.** The Bazaar has its own `maxUsdPrice` parameter, and in
+every probe it returned an empty list for every value tried, including values far above the
+most expensive listing. Relying on it would make Olai believe there is nothing it can afford, so the
 filter is applied locally after parsing.
 
 **A resource Olai cannot price is dropped.** A merchant writes its price in base units of a
@@ -132,8 +132,8 @@ and the hash, and anyone can look the hash up on a BSC explorer.
 input before a URL is built:
 
 - **Nansen current balance.** Sent as POST. The Bazaar entry describes it as a GET with a JSON
-  body, which `fetch` cannot send. A live probe on 2026-09-06 showed the same endpoint answers a
-  POST with the same 402 and echoes "POST" back in its own payload. Addresses are checked against
+  body, which `fetch` cannot send. A live probe showed the same endpoint answers a POST with the
+  same 402 and echoes "POST" back in its own payload. Addresses are checked against
   the chain they were given with.
 - **CoinMarketCap quotes.** Symbols go on the query string, comma separated, upper case.
 

@@ -1,6 +1,6 @@
 # Attack run: what we tried and what happened
 
-Captured on 2026-09-06T11:15:01.925Z. Every line below came from one run of
+Captured on 2026-09-06T11:56:37.532Z. Every line below came from one run of
 `npm run attacks -w @olai/agent`, which boots the real Olai service in this
 repo with a temporary SQLite ledger, the fake exchange, a scripted stand-in for
 Claude and a stand-in for the wallet CLI, then attacks it over real HTTP on a
@@ -19,7 +19,7 @@ local port. No live Binance call, no Anthropic call and no money are involved.
 | [ATTACK-09](./ATTACK-09.md) | approving an order with the kill switch on | BLOCKED |
 | [ATTACK-10](./ATTACK-10.md) | sixty one requests in one minute from one address | BLOCKED |
 | [ATTACK-11](./ATTACK-11.md) | reading the Binance token file and its permissions | NOT BLOCKED |
-| [ATTACK-12](./ATTACK-12.md) | sweeping the repo and the git history for secrets | BLOCKED |
+| [ATTACK-12](./ATTACK-12.md) | sweeping the repo and the git history for secrets | NOT BLOCKED |
 | [ATTACK-13](./ATTACK-13.md) | a CORS preflight from https://evil.example | BLOCKED |
 | [ATTACK-14](./ATTACK-14.md) | opening the event stream with no token | BLOCKED |
 
@@ -45,6 +45,40 @@ src/mcp/oauth.ts:407: await chmod(this.cfg.tokenPath, TOKEN_FILE_MODE);
 src/mcp/oauth.ts:409: // Windows has no POSIX permission bits. Nothing to tighten there.
 ```
 
+### ATTACK-12: sweeping the repo and the git history for secrets
+
+Key material found:
+git log -p --all, line 3815: an owner token long enough to open the API, ol.attac... (41 characters)
+
+The last step of that attack:
+
+```
+Read .env.example and listed every setting it carries, with whatever value is filled in.
+```
+
+and what came back:
+
+```
+ANTHROPIC_API_KEY=
+OLAI_OWNER_TOKEN=ol.
+OLAI_PORT=4000
+OLAI_DB_PATH=./data/olai.db
+OLAI_RULEBOOK_PATH=./data/rulebook.json
+OLAI_WEB_ORIGIN=http://localhost:3000
+OLAI_TRUST_PROXY=false
+OLAI_EXCHANGE=auto
+BINANCE_API_KEY=
+BINANCE_API_SECRET=
+BINANCE_API_ENV=testnet
+OLAI_DRY_RUN=true
+BINANCE_MCP_URL=https://agent.binance.com/mcp/agentic
+OLAI_PUBLIC_BASE_URL=http://127.0.0.1:4000
+OLAI_TOKEN_PATH=./data/binance-mcp-token.json
+OLAI_CLIENT_NAME=Olai
+BAZAAR_BASE_URL=https://www.binance.com/bapi/ramp/v1/public/ramp/b402
+OLAI_PROVE_SPEND=no
+```
+
 ## Notes from the run
 
 ### ATTACK-09
@@ -63,7 +97,7 @@ profile directory, which Olai does not set and does not check.
 
 ### ATTACK-12
 
-The owner's wallet address 0xC75126992E4744a75665405e9b427710C0d23052 appears 6 times, in
+The owner's wallet address 0xC75126992E4744a75665405e9b427710C0d23052 appears 5 times, in
 packages/agent/attacks/attack-12-secrets-sweep.ts, packages/agent/test/x402/baw.test.ts, packages/agent/test/x402/buyer.test.ts, README.md, STATE.md.
 That is on purpose: it is a public address, it is what a judge checks the on-chain payments
 against, and it is not key material. It is listed here so nobody has to wonder whether the

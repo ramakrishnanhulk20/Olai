@@ -2,7 +2,7 @@
 
 An analyst agent that buys its own market intelligence a cent at a time from its Binance wallet, trades on the owner's Binance sub-account only inside a written rulebook, and can prove what every cent and every order was for.
 
-[Live App](PENDING-LINK) · [Documentation](PENDING-LINK) · [Demo Video](PENDING-LINK)
+[Live App](PENDING-LINK) · [Documentation](PENDING-LINK/docs) · [Demo Video](PENDING-LINK)
 
 ## Live deployments
 

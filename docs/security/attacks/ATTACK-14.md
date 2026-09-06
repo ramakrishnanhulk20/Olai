@@ -1,6 +1,6 @@
 # ATTACK-14: opening the event stream with no token
 
-Captured on 2026-09-06T11:15:01.925Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T11:56:37.532Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that the feed is private after a client is on it. Everything published goes to every subscriber, since there is one owner. The OAuth routes outside /api are not covered here either.
@@ -12,7 +12,7 @@ Expected outcome, from docs/security/threat-model.md section 5: 401, from ownerA
 What we tried:
 
 ```
-GET http://127.0.0.1:61256/api/events
+GET http://127.0.0.1:62023/api/events
 accept: text/event-stream
 ```
 
@@ -34,7 +34,7 @@ vary: Origin
 What we tried:
 
 ```
-GET http://127.0.0.1:61256/api/events
+GET http://127.0.0.1:62023/api/events
 accept: text/event-stream
 authorization: Bearer ol.this-is-not-the-owners-token-at-all
 ```
@@ -59,7 +59,7 @@ What we tried:
 ```
 The real token with one extra character on the end, in case the compare is a prefix compare:
 
-GET http://127.0.0.1:61256/api/events
+GET http://127.0.0.1:62023/api/events
 accept: text/event-stream
 authorization: Bearer ol.attack-run-token-not-for-production-1x
 ```

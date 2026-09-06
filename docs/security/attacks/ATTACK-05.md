@@ -1,6 +1,6 @@
 # ATTACK-05: editing a ledger row directly in the SQLite file
 
-Captured on 2026-09-06T11:15:01.925Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T11:56:37.532Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that the ledger cannot be tampered with. It can, by anyone with the file. It proves the tampering is visible afterwards, and only for an attacker who does not also recompute every later hash.
@@ -12,7 +12,7 @@ Expected outcome, from docs/security/threat-model.md section 5: GET /api/ledger/
 What we tried:
 
 ```
-GET http://127.0.0.1:61211/api/ledger/verify
+GET http://127.0.0.1:61971/api/ledger/verify
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -34,7 +34,7 @@ vary: Origin
 What we tried:
 
 ```
-Opened C:\Users\Ram\AppData\Local\Temp\olai-attack-05-qrC1ra\olai.db directly with better-sqlite3, outside the running agent,
+Opened C:\Users\Ram\AppData\Local\Temp\olai-attack-05-PFYlIX\olai.db directly with better-sqlite3, outside the running agent,
 and tried to rewrite line 2, which is currently:
 {
   "seq": 2,
@@ -78,7 +78,7 @@ line 2 now reads:
 What we tried:
 
 ```
-GET http://127.0.0.1:61211/api/ledger/verify
+GET http://127.0.0.1:61971/api/ledger/verify
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 

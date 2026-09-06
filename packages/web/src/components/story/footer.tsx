@@ -6,7 +6,7 @@ import { motion, useReducedMotion, type Variants } from "framer-motion";
 // here, so the fallback is what keeps the anchor from rendering href="undefined".
 const links: Array<{ label: string; href: string }> = [
   { label: "Open the desk", href: "/app" },
-  { label: "Documentation", href: process.env.NEXT_PUBLIC_DOCS_URL ?? "#" },
+  { label: "Documentation", href: "/docs" },
   { label: "GitHub", href: process.env.NEXT_PUBLIC_REPO_URL ?? "#" },
 ];
 

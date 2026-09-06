@@ -131,8 +131,8 @@ sequenceDiagram
 
 ## Module dependency graph
 
-Arrows drawn from the real `import` lines in `packages/agent/src` (grep run 2026-09-06).
-Direction is "depends on".
+Arrows drawn from the real `import` lines in `packages/agent/src`, read with grep rather than
+by hand. Direction is "depends on".
 
 ```mermaid
 flowchart TD
@@ -184,7 +184,7 @@ flowchart TD
     config -.->|"index.ts reads config at boot, does not yet wire in api or session, see note below"| api
 ```
 
-Note on that last dashed arrow: as read on 2026-09-06, `src/index.ts` only loads config and
+Note on that last dashed arrow: as the code stands, `src/index.ts` only loads config and
 serves a bare `/health` stub. It does not import `api/app.ts`, `session/session.ts`, or
 `mcp/client.ts` yet, so the real owner API in `api/app.ts` is not wired into the running process.
 `policy` and `ledger` are the two modules with no outgoing edges; they import nothing else in
