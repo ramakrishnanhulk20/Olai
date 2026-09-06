@@ -1,6 +1,6 @@
 # ATTACK-11: reading the Binance token file and its permissions
 
-Captured on 2026-09-06T11:56:37.532Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T11:58:03.822Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that the token file is protected from anyone with the machine. It is plain JSON on disk on every platform. This only measures the permissions the code asks for and what this host reports.
@@ -13,7 +13,7 @@ What we tried:
 
 ```
 Wrote a token through the same path the real sign-in uses:
-  new BinanceOAuth({ tokenPath: "C:\Users\Ram\AppData\Local\Temp\olai-attack-11-Pmi2Yc\binance-mcp-token.json", ... }).authProvider().saveTokens({ access_token: "...", token_type: "Bearer" })
+  new BinanceOAuth({ tokenPath: "C:\Users\Ram\AppData\Local\Temp\olai-attack-11-J6oNr6\binance-mcp-token.json", ... }).authProvider().saveTokens({ access_token: "...", token_type: "Bearer" })
 then read the file and its permissions back.
 ```
 
@@ -21,7 +21,7 @@ What came back:
 
 ```
 platform: win32
-file: C:\Users\Ram\AppData\Local\Temp\olai-attack-11-Pmi2Yc\binance-mcp-token.json
+file: C:\Users\Ram\AppData\Local\Temp\olai-attack-11-J6oNr6\binance-mcp-token.json
 mode reported by fs.statSync: 0666
 
 contents:

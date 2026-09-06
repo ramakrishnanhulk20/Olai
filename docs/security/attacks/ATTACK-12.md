@@ -1,6 +1,6 @@
 # ATTACK-12: sweeping the repo and the git history for secrets
 
-Captured on 2026-09-06T11:56:37.532Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T11:58:03.822Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that no secret has ever leaked, or that the next commit will be clean. It is a snapshot, and it can only find the five patterns it knows about.
@@ -44,9 +44,9 @@ What came back:
 [sk-ant] packages/agent/attacks/attack-12-secrets-sweep.ts:42: const ANTHROPIC_KEY = /sk-ant-api\d{2}-[A-Za-z0-9_-]{40,}/;
 [PRIVATE_KEY] packages/agent/attacks/attack-12-secrets-sweep.ts:44: const KEY_ASSIGNMENT = /(PRIVATE_KEY|MNEMONIC)\s*[:=]\s*["']?[A-Za-z0-9+/=_-]{16,}/;
 [MNEMONIC] packages/agent/attacks/attack-12-secrets-sweep.ts:44: const KEY_ASSIGNMENT = /(PRIVATE_KEY|MNEMONIC)\s*[:=]\s*["']?[A-Za-z0-9+/=_-]{16,}/;
-[ol.] packages/agent/attacks/attack-12-secrets-sweep.ts:56: test: (token) => token === 'ol.this-is-not-the-owners-token-at-all',
-[ol.] packages/agent/attacks/attack-12-secrets-sweep.ts:201: 'token that starts with ol. and is long enough to open the API and is not one of these,',
-[ol.] packages/agent/attacks/attack-12-secrets-sweep.ts:253: 'The other matches above are the word, not the thing: the "ol." prefix constant in the auth',
+[ol.] packages/agent/attacks/attack-12-secrets-sweep.ts:58: test: (token) => token === 'ol.this-is-not-the-owners-token-at-all',
+[ol.] packages/agent/attacks/attack-12-secrets-sweep.ts:215: 'token that starts with ol. and is long enough to open the API and is not one of these,',
+[ol.] packages/agent/attacks/attack-12-secrets-sweep.ts:269: 'The other matches above are the word, not the thing: the "ol." prefix constant in the auth',
 [ol.] packages/agent/attacks/attack-14-sse-without-token.ts:22: token: 'ol.this-is-not-the-owners-token-at-all',
 [ol.] packages/agent/attacks/harness.ts:25: export const OWNER_TOKEN = 'ol.attack-run-token-not-for-production-1';
 [ol.] packages/agent/src/api/auth.ts:14: export const OWNER_TOKEN_PREFIX = 'ol.';
@@ -86,69 +86,55 @@ git log -p --all, then the same patterns over every line of it.
 What came back:
 
 ```
-history is 63462 lines long
+history is 95347 lines long
 
-[wallet address] git log -p --all, line 29: Run on 2026-09-06 with `OLAI_DRY_RUN=false OLAI_PROVE_SPEND=yes`. The receipt for that settlement, read from a BNB Smart Chain node: status success, block 12027
-[ol.] git log -p --all, line 301: +# "ol." and make it at least 24 characters. Anyone holding it can approve trades.
-[ol.] git log -p --all, line 302: +OLAI_OWNER_TOKEN=ol.
-[wallet address] git log -p --all, line 1374: +Run on 2026-09-06 with `OLAI_DRY_RUN=false OLAI_PROVE_SPEND=yes`. The receipt for that settlement, read from a BNB Smart Chain node: status success, block 1202
-[ol.] git log -p --all, line 1386: +| `OLAI_OWNER_TOKEN` | The password to Olai's own API. Must start with `ol.` and be at least 24 characters. Anyone holding it can approve trades. |
-[wallet address] git log -p --all, line 1549: +3. Fund the Agentic Wallet: about 5 USDT or USD1 on BNB Smart Chain to 0xC75126992E4744a75665405e9b427710C0d23052. Optional: lower the general daily limit in t
-[wallet address] git log -p --all, line 1577: +- Receipt read from a BSC node: status SUCCESS, block 120274603, 0.0100 USDT moved from the Agentic Wallet 0xC75126992E4744a75665405e9b427710C0d23052 to Nansen
-[ol.] git log -p --all, line 1579: +- Rename to Olai done (WO-13): 1,018 replacements across 138 files, package names @olai/agent and @olai/web, settings prefix OLAI_, token prefix ol., database 
-[ol.] git log -p --all, line 2299: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2323: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2362: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2417: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2445: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2486: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2513: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2516: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2547: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2717: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2755: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2821: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2851: +Expected outcome, from docs/security/threat-model.md section 5: 401 every time. Session ids (ol-<uuid>) and the owner token (ol. prefix, at least 24 characters
-[ol.] git log -p --all, line 2859: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2929: +authorization: Bearer ol.ol-f46840cb3183441fa1bb459cc7226276
-[ol.] git log -p --all, line 2967: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 2990: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3015: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3040: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3065: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3091: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3129: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3154: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3178: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3217: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3241: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3263: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3285: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3307: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3329: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[ol.] git log -p --all, line 3390: +authorization: Bearer ol.attack-run-token-not-for-production-1
-[sk-ant] git log -p --all, line 3499: +Read every file in D:\Projects\Binance and looked for sk-ant, ol., PRIVATE_KEY, MNEMONIC, wallet address.
-[ol.] git log -p --all, line 3499: +Read every file in D:\Projects\Binance and looked for sk-ant, ol., PRIVATE_KEY, MNEMONIC, wallet address.
-[PRIVATE_KEY] git log -p --all, line 3499: +Read every file in D:\Projects\Binance and looked for sk-ant, ol., PRIVATE_KEY, MNEMONIC, wallet address.
-[MNEMONIC] git log -p --all, line 3499: +Read every file in D:\Projects\Binance and looked for sk-ant, ol., PRIVATE_KEY, MNEMONIC, wallet address.
-[ol.] git log -p --all, line 3506: +token that starts with ol. and is long enough to open the API and is not one of these,
-[ol.] git log -p --all, line 3517: +[ol.] .env.example:7: # "ol." and make it at least 24 characters. Anyone holding it can approve trades.
-[ol.] git log -p --all, line 3518: +[ol.] .env.example:8: OLAI_OWNER_TOKEN=ol.
-[ol.] git log -p --all, line 3519: +[ol.] docs/security/threat-model.md:168: `OWNER_TOKEN_PREFIX = 'ol.'`, `assertOwnerToken` (checked at boot, refuses to start
-[ol.] git log -p --all, line 3520: +[ol.] docs/security/threat-model.md:245: the fact that session ids (`ol-<uuid>`) and the owner token (`ol.` prefix,
-[ol.] git log -p --all, line 3521: +[ol.] docs/site/build/assets/js/14107157.2c505138.js:1: "use strict";(self.webpackChunkolai_docs=self.webpackChunkolai_docs||[]).push([["7048"],{1983(e,n,s){s.
-[ol.] git log -p --all, line 3522: +[ol.] docs/site/build/assets/js/3592d2f2.c54357e1.js:1: "use strict";(self.webpackChunkolai_docs=self.webpackChunkolai_docs||[]).push([["3833"],{8765(e,n,i){i.
-[ol.] git log -p --all, line 3523: +[ol.] docs/site/build/assets/js/588bd741.18053824.js:1: "use strict";(self.webpackChunkolai_docs=self.webpackChunkolai_docs||[]).push([["3925"],{5832(e,n,s){s.
-[ol.] git log -p --all, line 3524: +[ol.] docs/site/build/assets/js/da1a8389.e0aaf91b.js:1: "use strict";(self.webpackChunkolai_docs=self.webpackChunkolai_docs||[]).push([["3787"],{4996(e,n,s){s.
-[ol.] git log -p --all, line 3525: +[ol.] docs/site/build/concepts/trust-model/index.html:76: <li class="">The token lives in its own namespace: it starts with <code>ol.</code> and is at least 24
-[ol.] git log -p --all, line 3526: +[ol.] docs/site/build/getting-started/quick-start/index.html:32: <table><thead><tr><th>Key<th>What to put in it<tbody><tr><td><code>ANTHROPIC_API_KEY</code><td
-[ol.] git log -p --all, line 3527: +[ol.] docs/site/build/security/overview/index.html:43: <li class="">One user, one bearer token, its own <code>ol.</code> namespace, compared in constant time, 
-[ol.] git log -p --all, line 3528: +[ol.] docs/site/build/security/threat-model/index.html:220: <p><strong>The owner token prefix and constant-time compare.</strong> <code>src/api/auth.ts</code>:
-[ol.] git log -p --all, line 3529: +[ol.] docs/site/docs/concepts/trust-model.md:93: - The token lives in its own namespace: it starts with `ol.` and is at least 24 characters, while
-[ol.] git log -p --all, line 3530: +[ol.] docs/site/docs/getting-started/quick-start.md:36: | `OLAI_OWNER_TOKEN` | A secret you invent. It has to start with `ol.` and be at least 24 characters. A
-[ol.] git log -p --all, line 3531: +[ol.] docs/site/docs/security/overview.md:51: - One user, one bearer token, its own `ol.` namespace, compared in constant time, checked at boot.
-[ol.] git log -p --all, line 3532: +[ol.] docs/site/docs/security/threat-model.md:140: **The owner token prefix and constant-time compare.** `src/api/auth.ts`: the `ol.` prefix, a
-... and 83 more of the same kinds
+[wallet address] git log -p --all, line 55: -3. Fund the Agentic Wallet: about 5 USDT or USD1 on BNB Smart Chain to 0xC75126992E4744a75665405e9b427710C0d23052. Optional: lower the general daily limit in t
+[wallet address] git log -p --all, line 31001: Run on 2026-09-06 with `OLAI_DRY_RUN=false OLAI_PROVE_SPEND=yes`. The receipt for that settlement, read from a BNB Smart Chain node: status success, block 12027
+[ol.] git log -p --all, line 31273: +# "ol." and make it at least 24 characters. Anyone holding it can approve trades.
+[ol.] git log -p --all, line 31274: +OLAI_OWNER_TOKEN=ol.
+[wallet address] git log -p --all, line 32346: +Run on 2026-09-06 with `OLAI_DRY_RUN=false OLAI_PROVE_SPEND=yes`. The receipt for that settlement, read from a BNB Smart Chain node: status success, block 1202
+[ol.] git log -p --all, line 32358: +| `OLAI_OWNER_TOKEN` | The password to Olai's own API. Must start with `ol.` and be at least 24 characters. Anyone holding it can approve trades. |
+[wallet address] git log -p --all, line 32521: +3. Fund the Agentic Wallet: about 5 USDT or USD1 on BNB Smart Chain to 0xC75126992E4744a75665405e9b427710C0d23052. Optional: lower the general daily limit in t
+[wallet address] git log -p --all, line 32549: +- Receipt read from a BSC node: status SUCCESS, block 120274603, 0.0100 USDT moved from the Agentic Wallet 0xC75126992E4744a75665405e9b427710C0d23052 to Nansen
+[ol.] git log -p --all, line 32551: +- Rename to Olai done (WO-13): 1,018 replacements across 138 files, package names @olai/agent and @olai/web, settings prefix OLAI_, token prefix ol., database 
+[ol.] git log -p --all, line 33402: +  `OWNER_TOKEN_PREFIX = 'ol.'`, `assertOwnerToken` (checked at boot, refuses to start
+[ol.] git log -p --all, line 33479: +  the fact that session ids (`ol-<uuid>`) and the owner token (`ol.` prefix,
+[ol.] git log -p --all, line 33872: +- The token lives in its own namespace: it starts with `ol.` and is at least 24 characters, while
+[ol.] git log -p --all, line 35201: +| `OLAI_OWNER_TOKEN` | A secret you invent. It has to start with `ol.` and be at least 24 characters. Anyone holding it can approve trades. |
+[ol.] git log -p --all, line 36302: +- One user, one bearer token, its own `ol.` namespace, compared in constant time, checked at boot.
+[ol.] git log -p --all, line 36469: +**The owner token prefix and constant-time compare.** `src/api/auth.ts`: the `ol.` prefix, a
+[ol.] git log -p --all, line 68852: +    const guessedPrefix = await call(harness.base, '/api/ledger', { token: `ol.${sessionId}` });
+[ol.] git log -p --all, line 68866: +        '401 every time. Session ids (ol-<uuid>) and the owner token (ol. prefix, at least 24 characters, compared by hash in constant time) are separate names
+[wallet address] git log -p --all, line 69414: +const WALLET_ADDRESS = '0xC75126992E4744a75665405e9b427710C0d23052';
+[sk-ant] git log -p --all, line 69417: +  { name: 'sk-ant', test: /sk-ant/i },
+[ol.] git log -p --all, line 69420: +  { name: 'ol.', test: /\bol\./ },
+[PRIVATE_KEY] git log -p --all, line 69421: +  { name: 'PRIVATE_KEY', test: /PRIVATE_KEY/ },
+[MNEMONIC] git log -p --all, line 69422: +  { name: 'MNEMONIC', test: /MNEMONIC/ },
+[sk-ant] git log -p --all, line 69434: +const ANTHROPIC_KEY = /sk-ant-api\d{2}-[A-Za-z0-9_-]{40,}/;
+[PRIVATE_KEY] git log -p --all, line 69436: +const KEY_ASSIGNMENT = /(PRIVATE_KEY|MNEMONIC)\s*[:=]\s*["']?[A-Za-z0-9+/=_-]{16,}/;
+[MNEMONIC] git log -p --all, line 69436: +const KEY_ASSIGNMENT = /(PRIVATE_KEY|MNEMONIC)\s*[:=]\s*["']?[A-Za-z0-9+/=_-]{16,}/;
+[ol.] git log -p --all, line 69448: +    test: (token) => token === 'ol.this-is-not-the-owners-token-at-all',
+[ol.] git log -p --all, line 69593: +        'token that starts with ol. and is long enough to open the API and is not one of these,',
+[ol.] git log -p --all, line 69645: +    'The other matches above are the word, not the thing: the "ol." prefix constant in the auth',
+[ol.] git log -p --all, line 69798: +      token: 'ol.this-is-not-the-owners-token-at-all',
+[ol.] git log -p --all, line 70063: +export const OWNER_TOKEN = 'ol.attack-run-token-not-for-production-1';
+[ol.] git log -p --all, line 72114: +export const OWNER_TOKEN_PREFIX = 'ol.';
+[ol.] git log -p --all, line 73906: +    .string({ error: 'not set, invent a secret that starts with "ol." and put it in .env' })
+[ol.] git log -p --all, line 80004: +const TOKEN = `ol.${'k'.repeat(40)}`;
+[ol.] git log -p --all, line 80360: +const TOKEN = `ol.${'e'.repeat(40)}`;
+[ol.] git log -p --all, line 80619: +const TOKEN = `ol.${'b'.repeat(40)}`;
+[sk-ant] git log -p --all, line 80658: +    ANTHROPIC_API_KEY: 'sk-ant-test-key-0123456789',
+[ol.] git log -p --all, line 81416: +const OWNER_TOKEN = `ol.${'t'.repeat(40)}`;
+[sk-ant] git log -p --all, line 81421: +      ANTHROPIC_API_KEY: 'sk-ant-test-key-0123456789',
+[sk-ant] git log -p --all, line 81426: +      ANTHROPIC_API_KEY: 'sk-ant-test-key-0123456789',
+[sk-ant] git log -p --all, line 81446: +      ANTHROPIC_API_KEY: 'sk-ant-test-key-0123456789',
+[sk-ant] git log -p --all, line 81460: +      loadConfig({ ANTHROPIC_API_KEY: 'sk-ant-test-key-0123456789', OLAI_OWNER_TOKEN: token });
+[ol.] git log -p --all, line 81463: +    expect(() => withToken('ol.short')).toThrowError(/24 characters/);
+[wallet address] git log -p --all, line 84822: +            userWalletAddress: '0xC75126992E4744a75665405e9b427710C0d23052',
+[wallet address] git log -p --all, line 84954: +  userWalletAddress: '0xC75126992E4744a75665405e9b427710C0d23052',
+[ol.] git log -p --all, line 87333: +            placeholder="ol.…"
+[ol.] git log -p --all, line 87359: +          Set OLAI_OWNER_TOKEN in .env, it starts with ol.
+[wallet address] git log -p --all, line 92732: +- Address on every EVM chain (BSC, Base, Ethereum, Polygon, Arbitrum, Robinhood): 0xC75126992E4744a75665405e9b427710C0d23052. Solana: A4x6wNMfJbiZsMRN9XVXvoyYf
 ```
 
 ## Step 3
@@ -217,9 +203,4 @@ What this cannot do is recognise a secret it has no pattern for. A Binance sessi
 instance, is an opaque string with no shape to match on, so the check that keeps it safe is
 the gitignore line above, not this sweep.
 
-## Finding
-
-Key material found:
-git log -p --all, line 3815: an owner token long enough to open the API, ol.attac... (41 characters)
-
-RESULT: NOT BLOCKED
+RESULT: BLOCKED

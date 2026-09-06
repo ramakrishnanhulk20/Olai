@@ -1,6 +1,6 @@
 # ATTACK-09: approving an order with the kill switch on
 
-Captured on 2026-09-06T11:56:37.532Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T11:58:03.822Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that kill cancels anything already sent to Binance. It does not, by design, and the threat model records that as gap 6.5. The flag is also in memory only, so a restart clears it.
@@ -12,7 +12,7 @@ Expected outcome, from docs/security/threat-model.md section 5: refused with age
 What we tried:
 
 ```
-POST http://127.0.0.1:61992/api/ask
+POST http://127.0.0.1:55067/api/ask
 content-type: application/json
 authorization: Bearer ol.attack-run-token-not-for-production-1
 
@@ -29,7 +29,7 @@ content-type: application/json
 keep-alive: timeout=5
 vary: Origin
 
-{"id":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","question":"Should I add a little BNB?","createdAt":"2026-09-06T11:56:38.365Z","status":"pending","proposal":{"summary":"Add 12 dollars of BNB.","reasoning":"Small size, deep book.","action":{"type":"order","symbol":"BNBUSDT","side":"BUY","quoteUsd":12,"orderType":"MARKET"},"confidence":0.6,"dataUsed":[],"risks":["A weekend gap would hurt this."]},"verdict":{"allowed":true,"requiresApproval":true,"effectiveMaxOrderUsd":20,"reasons":["This order is above $0.00, so the owner has to approve it."],"ruleIds":["order.needs_approval"]}}
+{"id":"ol-be77783f3e2e43de8c30ad41c06cb37c","question":"Should I add a little BNB?","createdAt":"2026-09-06T11:58:04.399Z","status":"pending","proposal":{"summary":"Add 12 dollars of BNB.","reasoning":"Small size, deep book.","action":{"type":"order","symbol":"BNBUSDT","side":"BUY","quoteUsd":12,"orderType":"MARKET"},"confidence":0.6,"dataUsed":[],"risks":["A weekend gap would hurt this."]},"verdict":{"allowed":true,"requiresApproval":true,"effectiveMaxOrderUsd":20,"reasons":["This order is above $0.00, so the owner has to approve it."],"ruleIds":["order.needs_approval"]}}
 ```
 
 ## Step 2
@@ -37,7 +37,7 @@ vary: Origin
 What we tried:
 
 ```
-POST http://127.0.0.1:61992/api/kill
+POST http://127.0.0.1:55067/api/kill
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -59,7 +59,7 @@ vary: Origin
 What we tried:
 
 ```
-POST http://127.0.0.1:61992/api/sessions/ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d/approve
+POST http://127.0.0.1:55067/api/sessions/ol-be77783f3e2e43de8c30ad41c06cb37c/approve
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -73,7 +73,7 @@ content-type: application/json
 keep-alive: timeout=5
 vary: Origin
 
-{"id":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","question":"Should I add a little BNB?","createdAt":"2026-09-06T11:56:38.365Z","status":"pending","proposal":{"summary":"Add 12 dollars of BNB.","reasoning":"Small size, deep book.","action":{"type":"order","symbol":"BNBUSDT","side":"BUY","quoteUsd":12,"orderType":"MARKET"},"confidence":0.6,"dataUsed":[],"risks":["A weekend gap would hurt this."]},"verdict":{"allowed":false,"requiresApproval":false,"effectiveMaxOrderUsd":0,"reasons":["Olai is stopped. The kill switch is on, so no orders and no payments go out until the owner resumes it."],"ruleIds":["agent.killed"]}}
+{"id":"ol-be77783f3e2e43de8c30ad41c06cb37c","question":"Should I add a little BNB?","createdAt":"2026-09-06T11:58:04.399Z","status":"pending","proposal":{"summary":"Add 12 dollars of BNB.","reasoning":"Small size, deep book.","action":{"type":"order","symbol":"BNBUSDT","side":"BUY","quoteUsd":12,"orderType":"MARKET"},"confidence":0.6,"dataUsed":[],"risks":["A weekend gap would hurt this."]},"verdict":{"allowed":false,"requiresApproval":false,"effectiveMaxOrderUsd":0,"reasons":["Olai is stopped. The kill switch is on, so no orders and no payments go out until the owner resumes it."],"ruleIds":["agent.killed"]}}
 ```
 
 ## Step 4
@@ -81,7 +81,7 @@ vary: Origin
 What we tried:
 
 ```
-POST http://127.0.0.1:61992/api/resume
+POST http://127.0.0.1:55067/api/resume
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -103,7 +103,7 @@ vary: Origin
 What we tried:
 
 ```
-POST http://127.0.0.1:61992/api/sessions/ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d/approve
+POST http://127.0.0.1:55067/api/sessions/ol-be77783f3e2e43de8c30ad41c06cb37c/approve
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -117,7 +117,7 @@ content-type: application/json
 keep-alive: timeout=5
 vary: Origin
 
-{"id":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","question":"Should I add a little BNB?","createdAt":"2026-09-06T11:56:38.365Z","status":"executed","proposal":{"summary":"Add 12 dollars of BNB.","reasoning":"Small size, deep book.","action":{"type":"order","symbol":"BNBUSDT","side":"BUY","quoteUsd":12,"orderType":"MARKET"},"confidence":0.6,"dataUsed":[],"risks":["A weekend gap would hurt this."]},"verdict":{"allowed":true,"requiresApproval":true,"effectiveMaxOrderUsd":20,"reasons":["This order is above $0.00, so the owner has to approve it."],"ruleIds":["order.needs_approval"]}}
+{"id":"ol-be77783f3e2e43de8c30ad41c06cb37c","question":"Should I add a little BNB?","createdAt":"2026-09-06T11:58:04.399Z","status":"executed","proposal":{"summary":"Add 12 dollars of BNB.","reasoning":"Small size, deep book.","action":{"type":"order","symbol":"BNBUSDT","side":"BUY","quoteUsd":12,"orderType":"MARKET"},"confidence":0.6,"dataUsed":[],"risks":["A weekend gap would hurt this."]},"verdict":{"allowed":true,"requiresApproval":true,"effectiveMaxOrderUsd":20,"reasons":["This order is above $0.00, so the owner has to approve it."],"ruleIds":["order.needs_approval"]}}
 ```
 
 ## Step 6
@@ -125,7 +125,7 @@ vary: Origin
 What we tried:
 
 ```
-GET http://127.0.0.1:61992/api/ledger?sessionId=ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d
+GET http://127.0.0.1:55067/api/ledger?sessionId=ol-be77783f3e2e43de8c30ad41c06cb37c
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -139,7 +139,7 @@ content-type: application/json
 keep-alive: timeout=5
 vary: Origin
 
-{"entries":[{"seq":3,"ts":"2026-09-06T11:56:38.365Z","kind":"question","actor":"owner","payload":{"question":"Should I add a little BNB?"},"sessionId":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","prevHash":"eca8918aca7555194121a67053a9f1cd7445856c13a56c6df0f087666af7fac2","hash":"8ea425af49703c4e1bed9ae41f84f8975bf6bcdaff3d69f6b5c16b8c66c4f8d1"},{"seq":5,"ts":"2026-09-06T11:56:38.367Z","kind":"proposal","actor":"agent","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"confidence":0.6,"dataUsed":[],"reasoning":"Small size, deep book.","risks":["A weekend gap would hurt this."],"summary":"Add 12 dollars of BNB."},"sessionId":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","prevHash":"aa81d622d4617668eb2edc74fd01edc22e8a412be70f0655644440777dfb07a2","hash":"441f3dbe03d15c95128bd7f6fa597ca900993b7e67ac413050ca35527e6339c8"},{"seq":6,"ts":"2026-09-06T11:56:38.368Z","kind":"proposal","actor":"agent","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"ruleIds":["order.needs_approval"],"summary":"Proposal passed the rulebook and is waiting for the owner"},"sessionId":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","prevHash":"441f3dbe03d15c95128bd7f6fa597ca900993b7e67ac413050ca35527e6339c8","hash":"b04d51865ab1af26082708436d12ddee3f3c7a5d5abd89d1d7f197e1001b38b3"},{"seq":8,"ts":"2026-09-06T11:56:38.371Z","kind":"rule.refused","actor":"rulebook","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"reasons":["Olai is stopped. The kill switch is on, so no orders and no payments go out until the owner resumes it."],"ruleIds":["agent.killed"],"summary":"The rulebook refused this order at approval time: Olai is stopped. The kill switch is on, so no orders and no payments go out until the owner resumes it."},"sessionId":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","prevHash":"0a9bdaa0e668a6c8b42f9c6404678d212ba63a3b1f518a4bde673ea4c0a7bbff","hash":"e5278132649a0d16ad5a8cbc5cdbfe817480328a89d374bcce8294ee6b759fbc"},{"seq":10,"ts":"2026-09-06T11:56:38.374Z","kind":"approval","actor":"owner","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"summary":"Owner approved BUY BNBUSDT"},"sessionId":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","prevHash":"8391b77552e59e083c39f6311fb80968d6c48b277781892c6965990a4205280d","hash":"af011ddffd3de4111b9d9648570e0d4c4f25bd640c5d9977fca5f12ca2f42f0e"},{"seq":11,"ts":"2026-09-06T11:56:38.375Z","kind":"order.sent","actor":"agent","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"dryRun":true,"summary":"Dry run: BUY BNBUSDT for 12 USD was not sent to Binance"},"orderId":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","sessionId":"ol-bffcad9c1a4a4ac4805f1d7ad21bbd7d","prevHash":"af011ddffd3de4111b9d9648570e0d4c4f25bd640c5d9977fca5f12ca2f42f0e","hash":"443b34d792bf1d51b479fff58aadc1e29d1c294c703d726e850481e068158051"}],"nextAfterSeq":null}
+{"entries":[{"seq":3,"ts":"2026-09-06T11:58:04.399Z","kind":"question","actor":"owner","payload":{"question":"Should I add a little BNB?"},"sessionId":"ol-be77783f3e2e43de8c30ad41c06cb37c","prevHash":"5e50765f2aeb7b24eb64a8085d200e6caf0e9761a43af33e3a28fdec4b7de7b1","hash":"b9531916bab663948b45429455656a29fa40a67728881898263a80bd37682a88"},{"seq":5,"ts":"2026-09-06T11:58:04.401Z","kind":"proposal","actor":"agent","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"confidence":0.6,"dataUsed":[],"reasoning":"Small size, deep book.","risks":["A weekend gap would hurt this."],"summary":"Add 12 dollars of BNB."},"sessionId":"ol-be77783f3e2e43de8c30ad41c06cb37c","prevHash":"2c261a18235c4b3d2116c30bc7af796120098b69d5f457dd6207f2ee9d439e0f","hash":"c95a812f1c14cea544903e6eea755f35e749086993872ad2e01f86fbf6992351"},{"seq":6,"ts":"2026-09-06T11:58:04.402Z","kind":"proposal","actor":"agent","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"ruleIds":["order.needs_approval"],"summary":"Proposal passed the rulebook and is waiting for the owner"},"sessionId":"ol-be77783f3e2e43de8c30ad41c06cb37c","prevHash":"c95a812f1c14cea544903e6eea755f35e749086993872ad2e01f86fbf6992351","hash":"d5225b029b6b0bcd8beb485574c9a0650cbb218a3870e88e0ddc09de08f20baf"},{"seq":8,"ts":"2026-09-06T11:58:04.404Z","kind":"rule.refused","actor":"rulebook","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"reasons":["Olai is stopped. The kill switch is on, so no orders and no payments go out until the owner resumes it."],"ruleIds":["agent.killed"],"summary":"The rulebook refused this order at approval time: Olai is stopped. The kill switch is on, so no orders and no payments go out until the owner resumes it."},"sessionId":"ol-be77783f3e2e43de8c30ad41c06cb37c","prevHash":"49b400ebd740e9feca57cb3250507c3a5a3cf81c4e57fdc1e327e65c563f5002","hash":"00e454e800b724f2f2dee49396af6ce0fc7fce19fbe6034d5e680742116c9b68"},{"seq":10,"ts":"2026-09-06T11:58:04.407Z","kind":"approval","actor":"owner","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"summary":"Owner approved BUY BNBUSDT"},"sessionId":"ol-be77783f3e2e43de8c30ad41c06cb37c","prevHash":"aea417ce65331c3dddf856f074488bf65f044f4e239c70c3ca6ced40011b5004","hash":"71125def10d4beff200403e7c72882c8a57ede1bd7262e156b1a802989c73e60"},{"seq":11,"ts":"2026-09-06T11:58:04.407Z","kind":"order.sent","actor":"agent","payload":{"action":{"orderType":"MARKET","quoteUsd":12,"side":"BUY","symbol":"BNBUSDT","type":"order"},"dryRun":true,"summary":"Dry run: BUY BNBUSDT for 12 USD was not sent to Binance"},"orderId":"ol-be77783f3e2e43de8c30ad41c06cb37c","sessionId":"ol-be77783f3e2e43de8c30ad41c06cb37c","prevHash":"71125def10d4beff200403e7c72882c8a57ede1bd7262e156b1a802989c73e60","hash":"66a8180d6d4f71e20be0dbddea4af9a59feb5aaf2fad76329c649404324e70ba"}],"nextAfterSeq":null}
 ```
 
 ## Note

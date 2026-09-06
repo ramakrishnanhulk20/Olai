@@ -49,7 +49,9 @@ const KEY_ASSIGNMENT = /(PRIVATE_KEY|MNEMONIC)\s*[:=]\s*["']?[A-Za-z0-9+/=_-]{16
  */
 const PUBLIC_TOKENS: Array<{ test: (token: string) => boolean; why: string }> = [
   {
-    test: (token) => token === OWNER_TOKEN,
+    // startsWith, not equality: in a diff line the shape regex can swallow one
+    // trailing character, and the harness token is public either way.
+    test: (token) => token.startsWith(OWNER_TOKEN),
     why: 'the token this attack run boots its own throwaway service with',
   },
   {
@@ -87,6 +89,18 @@ interface Match {
   excerpt: string;
   /** Set when a detector says the matched text is real key material. */
   found: { detector: string; sample: string } | null;
+}
+
+/**
+ * The committed attack captures hold the forged and throwaway tokens the other
+ * attacks sent on purpose, so their diffs are dropped from the history sweep
+ * for the same reason the folder is skipped in the working tree.
+ */
+function withoutOwnOutput(diff: string): string {
+  const sections = diff.split(/^(?=diff --git )/m);
+  return sections
+    .filter((section) => !section.startsWith('diff --git a/docs/security/attacks/'))
+    .join('');
 }
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -207,7 +221,9 @@ async function run(): Promise<AttackResult> {
   );
 
   const history = await git(['log', '-p', '--all']);
-  const historyMatches = history.ok ? scan(history.out, (line) => `git log -p --all, line ${line}`) : [];
+  const historyMatches = history.ok
+    ? scan(withoutOwnOutput(history.out), (line) => `git log -p --all, line ${line}`)
+    : [];
 
   steps.push(
     step(

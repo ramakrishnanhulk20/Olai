@@ -1,6 +1,6 @@
 # ATTACK-07: a rulebook with NaN, Infinity, a negative cap and a string
 
-Captured on 2026-09-06T11:56:37.532Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T11:58:03.822Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that a rulebook which passes the schema is a safe one. The owner can legitimately save loose rules. This is only about shapes that would break the arithmetic.
@@ -12,7 +12,7 @@ Expected outcome, from docs/security/threat-model.md section 5: 400 on each atte
 What we tried:
 
 ```
-GET http://127.0.0.1:61977/api/rulebook
+GET http://127.0.0.1:55061/api/rulebook
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -34,7 +34,7 @@ vary: Origin
 What we tried:
 
 ```
-PUT http://127.0.0.1:61977/api/rulebook
+PUT http://127.0.0.1:55061/api/rulebook
 content-type: application/json
 authorization: Bearer ol.attack-run-token-not-for-production-1
 
@@ -59,7 +59,7 @@ vary: Origin
 What we tried:
 
 ```
-PUT http://127.0.0.1:61977/api/rulebook
+PUT http://127.0.0.1:55061/api/rulebook
 content-type: application/json
 authorization: Bearer ol.attack-run-token-not-for-production-1
 
@@ -84,7 +84,7 @@ vary: Origin
 What we tried:
 
 ```
-PUT http://127.0.0.1:61977/api/rulebook
+PUT http://127.0.0.1:55061/api/rulebook
 content-type: application/json
 authorization: Bearer ol.attack-run-token-not-for-production-1
 
@@ -109,7 +109,7 @@ vary: Origin
 What we tried:
 
 ```
-PUT http://127.0.0.1:61977/api/rulebook
+PUT http://127.0.0.1:55061/api/rulebook
 content-type: application/json
 authorization: Bearer ol.attack-run-token-not-for-production-1
 
@@ -136,7 +136,7 @@ What we tried:
 ```
 The rulebook the service is actually running, read back after all four attempts:
 
-GET http://127.0.0.1:61977/api/rulebook
+GET http://127.0.0.1:55061/api/rulebook
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
