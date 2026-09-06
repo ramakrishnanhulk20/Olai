@@ -1,6 +1,6 @@
 # ATTACK-04: replaying an x402 payment: the same paymentId signed twice
 
-Captured on 2026-09-06T11:58:03.822Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T12:12:35.109Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: anything about the real wallet or a real settlement. The wallet here is a stand-in, so this is about Olai refusing to ask twice, not about what Binance would do if it were asked twice.
@@ -121,7 +121,7 @@ Wallet sign calls so far: 1
 What we tried:
 
 ```
-GET http://127.0.0.1:55053/api/ledger?kinds=payment.signed
+GET http://127.0.0.1:55057/api/ledger?kinds=payment.signed
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -135,7 +135,7 @@ content-type: application/json
 keep-alive: timeout=5
 vary: Origin
 
-{"entries":[{"seq":2,"ts":"2026-09-06T11:58:04.298Z","kind":"payment.signed","actor":"agent","payload":{"paymentId":"attack-04-payment-id","summary":"About to sign one payment of $0.0100 for https://api.merchant.invalid/v1/address/current-balance","url":"https://api.merchant.invalid/v1/address/current-balance"},"costUsd":0.01,"prevHash":"ad8e9ef449e278697f7d5ff9cbe77718dd813cde5739686f07a03c41738384c8","hash":"4c8b5b8a27d9ee4ab039931eb9c662e5466eebd0a47c8e71d0c93b58171d31f3"},{"seq":3,"ts":"2026-09-06T11:58:04.299Z","kind":"payment.signed","actor":"agent","payload":{"paymentId":"attack-04-payment-id-from-a-previous-process","summary":"About to sign one payment of $0.0100 for https://api.merchant.invalid/v1/address/current-balance","url":"https://api.merchant.invalid/v1/address/current-balance"},"costUsd":0.01,"prevHash":"4c8b5b8a27d9ee4ab039931eb9c662e5466eebd0a47c8e71d0c93b58171d31f3","hash":"16afe7fdef1c919574f8d5c8e6c7eb5203fafc9d69282adf8356fddcf44bff3b"}],"nextAfterSeq":null}
+{"entries":[{"seq":2,"ts":"2026-09-06T12:12:35.739Z","kind":"payment.signed","actor":"agent","payload":{"paymentId":"attack-04-payment-id","summary":"About to sign one payment of $0.0100 for https://api.merchant.invalid/v1/address/current-balance","url":"https://api.merchant.invalid/v1/address/current-balance"},"costUsd":0.01,"prevHash":"213735b2f9b10200e8b013087e44ee6bb4e03940a97f6cf109158dc0620eb375","hash":"92b8edde8d1d76303129d2aa62aedce52d4c98cfbf39f8d51e96f6db4c8202e8"},{"seq":3,"ts":"2026-09-06T12:12:35.740Z","kind":"payment.signed","actor":"agent","payload":{"paymentId":"attack-04-payment-id-from-a-previous-process","summary":"About to sign one payment of $0.0100 for https://api.merchant.invalid/v1/address/current-balance","url":"https://api.merchant.invalid/v1/address/current-balance"},"costUsd":0.01,"prevHash":"92b8edde8d1d76303129d2aa62aedce52d4c98cfbf39f8d51e96f6db4c8202e8","hash":"28894e298abd45fe0a74b4eb5714907ab0c71899753a7f1153586b6f695ed0a9"}],"nextAfterSeq":null}
 ```
 
 RESULT: BLOCKED

@@ -1,6 +1,6 @@
 # ATTACK-06: forging the owner token from a session id
 
-Captured on 2026-09-06T11:58:03.822Z by `npm run attacks -w @olai/agent`. Everything below is
+Captured on 2026-09-06T12:12:35.109Z by `npm run attacks -w @olai/agent`. Everything below is
 the output of that run, pasted as it came back.
 
 What this attack does NOT prove: that the owner token is safe from theft. It is a bearer token: whoever holds it is the owner. This only shows that a session id is not one.
@@ -12,7 +12,7 @@ Expected outcome, from docs/security/threat-model.md section 5: 401 every time. 
 What we tried:
 
 ```
-GET http://127.0.0.1:55058/api/sessions
+GET http://127.0.0.1:55062/api/sessions
 authorization: Bearer ol.attack-run-token-not-for-production-1
 ```
 
@@ -26,7 +26,7 @@ content-type: application/json
 keep-alive: timeout=5
 vary: Origin
 
-[{"id":"ol-67143886c1c54e3fbf3407f3687daa03","question":"Anything worth doing in BNB today?","createdAt":"2026-09-06T11:58:04.338Z","status":"approved","proposal":{"summary":"Sit this one out.","reasoning":"Nothing in the free reads argues for a trade right now.","action":{"type":"hold","reason":"The evidence is thin."},"confidence":0.4,"dataUsed":[],"risks":["Missing a move if it runs without me."]}}]
+[{"id":"ol-99d04b2d63444a74b231885bbe2a28fe","question":"Anything worth doing in BNB today?","createdAt":"2026-09-06T12:12:35.777Z","status":"approved","proposal":{"summary":"Sit this one out.","reasoning":"Nothing in the free reads argues for a trade right now.","action":{"type":"hold","reason":"The evidence is thin."},"confidence":0.4,"dataUsed":[],"risks":["Missing a move if it runs without me."]}}]
 ```
 
 ## Step 2
@@ -36,8 +36,8 @@ What we tried:
 ```
 Take the session id from the list above and send it as the bearer token.
 
-GET http://127.0.0.1:55058/api/ledger
-authorization: Bearer ol-67143886c1c54e3fbf3407f3687daa03
+GET http://127.0.0.1:55062/api/ledger
+authorization: Bearer ol-99d04b2d63444a74b231885bbe2a28fe
 ```
 
 What came back:
@@ -58,8 +58,8 @@ vary: Origin
 What we tried:
 
 ```
-POST http://127.0.0.1:55058/api/sessions/ol-67143886c1c54e3fbf3407f3687daa03/approve
-authorization: Bearer ol-67143886c1c54e3fbf3407f3687daa03
+POST http://127.0.0.1:55062/api/sessions/ol-99d04b2d63444a74b231885bbe2a28fe/approve
+authorization: Bearer ol-99d04b2d63444a74b231885bbe2a28fe
 ```
 
 What came back:
@@ -82,8 +82,8 @@ What we tried:
 ```
 The same id with the owner prefix glued on the front, in case the prefix is all that is checked.
 
-GET http://127.0.0.1:55058/api/ledger
-authorization: Bearer ol.ol-67143886c1c54e3fbf3407f3687daa03
+GET http://127.0.0.1:55062/api/ledger
+authorization: Bearer ol.ol-99d04b2d63444a74b231885bbe2a28fe
 ```
 
 What came back:

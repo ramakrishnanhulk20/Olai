@@ -1,6 +1,6 @@
 # Attack run: what we tried and what happened
 
-Captured on 2026-09-06T11:58:03.822Z. Every line below came from one run of
+Captured on 2026-09-06T12:12:35.109Z. Every line below came from one run of
 `npm run attacks -w @olai/agent`, which boots the real Olai service in this
 repo with a temporary SQLite ledger, the fake exchange, a scripted stand-in for
 Claude and a stand-in for the wallet CLI, then attacks it over real HTTP on a
@@ -63,8 +63,8 @@ profile directory, which Olai does not set and does not check.
 
 ### ATTACK-12
 
-The owner's wallet address 0xC75126992E4744a75665405e9b427710C0d23052 appears 5 times, in
-packages/agent/attacks/attack-12-secrets-sweep.ts, packages/agent/test/x402/baw.test.ts, packages/agent/test/x402/buyer.test.ts, README.md, STATE.md.
+The owner's wallet address 0xC75126992E4744a75665405e9b427710C0d23052 appears 4 times, in
+packages/agent/attacks/attack-12-secrets-sweep.ts, packages/agent/test/x402/baw.test.ts, packages/agent/test/x402/buyer.test.ts, README.md.
 That is on purpose: it is a public address, it is what a judge checks the on-chain payments
 against, and it is not key material. It is listed here so nobody has to wonder whether the
 sweep saw it.
