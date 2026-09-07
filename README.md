@@ -4,7 +4,7 @@ An analyst agent that buys its own market intelligence a cent at a time from its
 
 Most agents on Agent OS use one door. Olai uses four at once: it finds data in the Bazaar, pays for it from its Binance wallet over x402, reads the market through the exchange API, and keeps a receipt for every cent and every order.
 
-[Live App](https://olai-web-self.vercel.app/) · [Documentation](https://olai-web-self.vercel.app/docs) · [Demo Video](PENDING-LINK)
+[Live App](https://olai-web-self.vercel.app/) · [Documentation](https://olai-web-self.vercel.app/docs) · [Demo Video](https://youtu.be/A_4rViNGqV8) · [Submission post](https://x.com/ram_krish2000/status/2097009939919294793)
 
 ## Live deployments
 
