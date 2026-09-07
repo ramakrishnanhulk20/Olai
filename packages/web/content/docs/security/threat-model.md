@@ -12,8 +12,9 @@ Where the two differ, the file in the repository is the original.
 Written from the code as it exists in `packages/agent/src`. The routes under
 `src/api` exist and are wired, and the rulebook engine, ledger, x402 buyer, Bazaar client, the
 exchange REST client and the MCP client are all coded. The owner's desk now ships too, at `/app`
-(`packages/web/src/app/app/page.tsx`), and is covered below as its own entry point, because a
-browser is a different kind of target than a terminal calling curl directly.
+(`packages/web/src/app/app/page.tsx`, components under
+`packages/web/src/components/conversation`), and is covered below as its own entry point, because
+a browser is a different kind of target than a terminal calling curl directly.
 
 Olai trades through Binance's exchange REST API on an isolated sub-account
 (`src/exchange/rest.ts`), not through the Binance MCP server. Binance's own consent page turned
@@ -77,7 +78,7 @@ What an attacker could take or break, and why each one matters.
 
 | Entry point | Where in code | What reaches it |
 |---|---|---|
-| The desk in the browser | `packages/web/src/app/app/page.tsx`, `packages/web/src/components/desk/*` | The owner's own browser tab. Gated by the owner token, held in `sessionStorage` and sent as the `Authorization` header on every call; a 401 clears it. Every call goes to a route below, from the one origin CORS allows. The landing page at `/` is separate and unauthenticated: it reads only public `/health` and an exported ledger sample, holding no token at all |
+| The desk in the browser | `packages/web/src/app/app/page.tsx`, `packages/web/src/components/conversation/*`, `packages/web/src/lib/describe.ts` | The owner's own browser tab. Gated by the owner token, typed into the gate screen ("One token. One owner.", `packages/web/src/components/desk/gate.tsx`), held in `sessionStorage` and sent as the `Authorization` header on every call; a 401 clears it. Every call goes to a route below, from the one origin CORS allows. Ledger lines are rendered as sentences by `lib/describe.ts`, which reads fields off the parsed entry and never evaluates or renders payload text as markup. Without a token the same screen plays a recorded run out of `packages/web/public/ledger-sample.json` and holds no token at all, as does the separate landing page at `/`, which reads only public `/health` and that same export |
 | `GET /health` | `src/api/app.ts` | Public, no auth, returns `ok`, `dryRun`, `killed`, `version` only |
 | `GET /api/rulebook`, `PUT /api/rulebook` | `src/api/app.ts` | Owner token; body validated by `rulebookSchema` before `RulebookStore.save` |
 | `POST /api/ask` | `src/api/app.ts` | Owner token; runs `SessionRunner.ask` then `runAnalyst`, the only entry that spends Anthropic tokens and can trigger `buy_data` |
@@ -158,11 +159,14 @@ Nothing from outside the process is used unparsed.
 **The desk adds a browser, so it is scoped like one.** A script that ran inside the page could
 read `sessionStorage` the same way the desk's own code does. The mitigation is in what the desk
 refuses to load or render: no third-party script tag anywhere in the bundle, and nothing from the
-network is ever rendered as HTML, only as text. The token lives in `sessionStorage`, not
-`localStorage`, so it dies with the tab. `OLAI_WEB_ORIGIN` is the only origin the API's CORS
-answers, so no other site can get a browser to carry the token to it. The landing page at `/` is a
-separate, unauthenticated surface: it reads only public `/health` and an exported ledger sample,
-so there is nothing on it for a browser bug to leak.
+network is ever rendered as HTML, only as text. That covers the sentences too: `lib/describe.ts`
+turns each ledger line into a sentence from the fields of the parsed entry, and the raw payload
+under **The ledger line** is printed as escaped JSON text, so a merchant name or a rulebook name
+cannot become markup. The token lives in `sessionStorage`, not `localStorage`, so it dies with the
+tab. `OLAI_WEB_ORIGIN` is the only origin the API's CORS answers, so no other site can get a
+browser to carry the token to it. The replay a visitor without a token sees, and the landing page
+at `/`, hold no token at all: they read only public `/health` and an exported ledger sample, so
+there is nothing on either for a browser bug to leak.
 
 **Binance's own controls, relied upon.** No withdrawal scope exists for the MCP server. The
 Agentic sub-account is walled off from the owner's main account. The Agentic Wallet has a daily

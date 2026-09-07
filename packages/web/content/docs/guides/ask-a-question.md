@@ -8,15 +8,40 @@ description: What a good question looks like, what the agent may do with it, and
 
 ## From the desk
 
-Type the question into the **Ask Olai** box and send it. Sending is disabled while a question is
-already running, while Olai is stopped, or while the service cannot be reached. The button reads
-"Olai is working…" during a session, next to a note that every answer is paid for from the wallet.
-A session can take a minute or more, so the wait carries an honest label instead of a bare
-spinner: "Olai is reading the market and shopping for data, this can take a minute," with a
-running seconds count beside it. The same steps land in the **Thinking** panel below as they
-happen, and the result lands in the proposal card once `propose` is called. These are
-`packages/web/src/components/desk/ask-box.tsx` and
-`packages/web/src/components/desk/thinking-stream.tsx`.
+Open `/app`. With no questions asked yet, the welcome card reads **Your analyst is ready.** over
+three steps: **1. Check the rulebook**, one line of the rules in force with an **Edit** link that
+opens the Details drawer on the Rulebook tab; **2. Ask a question**, with three example chips that
+fill the box for you; and **3. Approve or reject what Olai proposes**.
+
+The box at the bottom of the screen carries the placeholder "Ask Olai about a position or a
+market" and the button beside it reads **Ask Olai**. Ctrl-Enter, or Cmd-Enter on a Mac, sends it
+too. Sending is disabled while a question is already running, while Olai is stopped ("Olai is
+stopped. Resume it at the top of the screen before asking anything."), and while the service
+cannot be reached. During a session the button reads "Olai is working" and a line under it says
+"Reading the market and shopping for data, this can take a minute," with a running seconds count
+beside it, because a session takes a minute or more and a bare spinner would read as a hang.
+
+Your question appears at the top of the thread under "You asked". Under it, every step Olai takes
+arrives as one plain sentence as it happens:
+
+```
+Olai searched the Bazaar for BNB wallet flows: 3 listings under $0.05
+Olai priced a data call at $0.01 from api.nansen.ai
+Olai paid api.nansen.ai $0.01 from the wallet
+Settled on BNB Smart Chain, api.nansen.ai was paid $0.01
+Olai read the market: BNBUSDT at ...
+```
+
+The settled line carries a BscScan link to the settlement hash, and every sentence has a **The
+ledger line** button that opens the raw record under it. None of these sentences is written by
+the screen: each one is a ledger line read back through `packages/web/src/lib/describe.ts`, so
+the conversation and the receipt cannot tell different stories. **Show Olai's reasoning**, under
+the steps, opens the raw model commentary for anyone who wants it.
+
+The session ends with the proposal card, covered in [Approve or reject](./approve-or-reject.md).
+Earlier questions are in the left rail, headed **Earlier questions**, which becomes a dropdown of
+the same name on a narrow screen. These are the components under
+`packages/web/src/components/conversation`.
 
 ## From the command line
 
@@ -106,7 +131,7 @@ stream. At most 16 streams may be open at once.
 
 The desk reads this stream with `fetch` and a stream reader rather than `EventSource`, because
 `EventSource` cannot carry the `Authorization` header the owner's token needs
-(`packages/web/src/lib/sse.ts`).
+(`packages/web/src/lib/sse.ts`). It is what **Show Olai's reasoning** opens.
 
 The stream is commentary, not the record. Nothing is proven by it. The ledger is the record.
 

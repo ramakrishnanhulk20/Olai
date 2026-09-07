@@ -5,50 +5,43 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 /**
- * The stop button, built to look like one.
+ * One labelled button for the thing that stops the agent.
  *
  * Stopping asks first, because it refuses every order and every payment until
  * the owner comes back. Resuming does not: undoing a stop is the safe direction.
  *
- * The confirm is portalled to the body. Its old home was inside the sticky
- * header, and a backdrop filter on that header makes it the containing block for
- * anything fixed inside it, which put the dialog off the top of a phone screen
- * where the owner could not reach the one button that stops the agent.
- *
- * A note in place of the running word means the switch is not this visitor's to
- * throw, so the word Running is never printed next to a switch nobody can use.
+ * The confirm is portalled to the body. The header above it has a backdrop
+ * filter, which makes it the containing block for anything fixed inside it and
+ * would put this dialog off the top of a phone screen.
  */
-export function KillSwitch({
+export function StopButton({
   killed,
   busy,
   disabled,
-  offline = false,
-  problem,
   note = null,
+  problem,
   onKill,
   onResume,
 }: {
   killed: boolean;
   busy: boolean;
   disabled: boolean;
-  offline?: boolean;
-  problem: string | null;
   note?: string | null;
+  problem: string | null;
   onKill: () => void;
   onResume: () => void;
 }) {
   const shouldReduce = useReducedMotion() ?? false;
   const [asking, setAsking] = useState(false);
-  const toggleRef = useRef<HTMLButtonElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
 
-  const state = note ?? (offline ? "Not connected" : killed ? "Stopped" : "Running");
-  const action = note ?? (killed ? "Resume Olai" : "Stop Olai");
+  const label = busy ? "Working" : killed ? "Resume Olai" : "Stop Olai";
 
   const close = useCallback(() => {
     setAsking(false);
-    toggleRef.current?.focus();
+    buttonRef.current?.focus();
   }, []);
 
   const click = () => {
@@ -109,7 +102,7 @@ export function KillSwitch({
           initial={shouldReduce ? { opacity: 1 } : { opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[120] flex items-end justify-center bg-ground/85 px-4 pb-10 backdrop-blur-sm sm:items-center sm:pb-0"
+          className="fixed inset-0 z-[130] flex items-end justify-center bg-ground/85 px-4 pb-10 backdrop-blur-sm sm:items-center sm:pb-0"
           onClick={close}
         >
           <motion.div
@@ -122,15 +115,19 @@ export function KillSwitch({
             className="desk-panel w-full max-w-[34rem] p-7"
             role="dialog"
             aria-modal="true"
-            aria-labelledby="kill-switch-title"
+            aria-labelledby="conversation-stop-title"
           >
             <p className="font-mono text-[0.68rem] uppercase tracking-[0.2em] text-bad">
               Kill switch
             </p>
             <h2
-              id="kill-switch-title"
+              id="conversation-stop-title"
               className="mt-4 font-display font-extrabold text-ink"
-              style={{ fontSize: "clamp(1.6rem,3.4vw,2.4rem)", letterSpacing: "-0.03em", lineHeight: 1 }}
+              style={{
+                fontSize: "clamp(1.6rem,3.4vw,2.4rem)",
+                letterSpacing: "-0.03em",
+                lineHeight: 1,
+              }}
             >
               Stop Olai?
             </h2>
@@ -144,7 +141,7 @@ export function KillSwitch({
                 onClick={() => {
                   setAsking(false);
                   onKill();
-                  toggleRef.current?.focus();
+                  buttonRef.current?.focus();
                 }}
                 className="desk-button-bad px-6 py-3 text-[0.92rem]"
               >
@@ -165,36 +162,16 @@ export function KillSwitch({
   );
 
   return (
-    <div className="relative flex items-center gap-2 sm:gap-3">
-      <span
-        className={`hidden font-mono text-[0.66rem] uppercase tracking-[0.18em] sm:block ${
-          note ? "max-w-[11rem] text-right leading-[1.5] text-ink/55" : "text-ink/55"
-        }`}
-      >
-        {state}
-      </span>
-
+    <div className="relative">
       <button
-        ref={toggleRef}
+        ref={buttonRef}
         type="button"
         onClick={click}
         disabled={busy || disabled}
-        role="switch"
-        aria-checked={!killed}
-        aria-label={action}
-        title={action}
-        className="desk-toggle-hit"
+        title={note ?? label}
+        className={`conv-stop ${killed ? "is-stopped" : ""}`}
       >
-        <span
-          className={`desk-toggle ${killed ? "is-off" : "is-on"} ${busy ? "is-busy" : ""}`}
-          aria-hidden
-        >
-          <motion.span
-            className="desk-toggle-knob"
-            layout={!shouldReduce}
-            transition={{ type: "spring", stiffness: 520, damping: 34 }}
-          />
-        </span>
+        {label}
       </button>
 
       {typeof document === "undefined" ? null : createPortal(confirm, document.body)}

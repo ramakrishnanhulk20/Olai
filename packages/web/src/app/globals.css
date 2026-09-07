@@ -319,37 +319,6 @@ select.desk-input option {
   }
 }
 
-/* One session in the picker: a chip on a phone, a row on a desk. */
-.desk-session {
-  display: flex;
-  flex: 0 0 auto;
-  flex-direction: column;
-  width: 13.5rem;
-  border-radius: var(--radius-control);
-  border: 1px solid rgba(242, 239, 232, 0.1);
-  background: rgba(10, 10, 10, 0.45);
-  padding: 0.6rem 0.7rem;
-  text-align: left;
-  transition: border-color 0.25s ease, background-color 0.25s ease;
-}
-
-.desk-session:hover {
-  border-color: rgba(242, 239, 232, 0.28);
-  background: rgba(242, 239, 232, 0.04);
-}
-
-.desk-session.is-picked {
-  border-color: rgba(245, 165, 36, 0.55);
-  background: rgba(245, 165, 36, 0.08);
-  box-shadow: inset 2px 0 0 var(--color-amber);
-}
-
-@media (min-width: 640px) {
-  .desk-session {
-    width: 100%;
-  }
-}
-
 .desk-button-amber {
   border-radius: var(--radius-control);
   background: var(--color-amber);
@@ -397,63 +366,6 @@ select.desk-input option {
 .desk-button-bad:hover:not(:disabled) {
   background: rgba(255, 92, 122, 0.1);
   border-color: var(--color-bad);
-}
-
-/* The kill switch. Built to look like a thing you push, not a checkbox.
-   The switch keeps its 70 by 34 face and the button around it carries the hit
-   area, because a thumb needs 44px and the face would look wrong that tall. */
-.desk-toggle-hit {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-}
-
-.desk-toggle-hit:disabled {
-  cursor: not-allowed;
-}
-
-.desk-toggle {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  width: 4.4rem;
-  height: 2.1rem;
-  padding: 0.22rem;
-  border-radius: 10px;
-  border: 1px solid rgba(242, 239, 232, 0.16);
-  background: rgba(10, 10, 10, 0.9);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.75);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.desk-toggle.is-on {
-  border-color: rgba(245, 165, 36, 0.6);
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), 0 0 26px -10px rgba(245, 165, 36, 0.9);
-}
-
-.desk-toggle.is-off {
-  border-color: rgba(255, 92, 122, 0.5);
-}
-
-.desk-toggle.is-busy {
-  opacity: 0.6;
-  cursor: wait;
-}
-
-.desk-toggle-knob {
-  display: block;
-  width: 1.9rem;
-  height: 1.5rem;
-  border-radius: 6px;
-  background: linear-gradient(180deg, rgba(242, 239, 232, 0.9), rgba(242, 239, 232, 0.55));
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
-}
-
-.desk-toggle.is-on .desk-toggle-knob {
-  margin-left: auto;
-  background: linear-gradient(180deg, #ffc766, var(--color-amber));
 }
 
 .desk-mini-toggle {
@@ -1340,5 +1252,447 @@ select.desk-input option {
     align-self: start;
     max-height: calc(100svh - 7rem);
     overflow-y: auto;
+  }
+}
+
+/* conversation */
+
+.conv-shell {
+  display: flex;
+  align-items: flex-start;
+  min-height: calc(100svh - 4rem);
+}
+
+/* The rail is a strip until there is room for the questions themselves, and the
+   owner can send it back to a strip at any width with the collapse control. */
+.conv-rail {
+  position: sticky;
+  top: 4rem;
+  z-index: 30;
+  display: none;
+  flex-direction: column;
+  flex: 0 0 4.75rem;
+  width: 4.75rem;
+  height: calc(100svh - 4rem);
+  padding: 1.5rem 0.75rem 1.25rem;
+  border-right: 1px solid rgba(242, 239, 232, 0.08);
+  background: linear-gradient(180deg, rgba(242, 239, 232, 0.02), rgba(10, 10, 10, 0));
+  transition: flex-basis 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.conv-rail-label,
+.conv-rail-toggle {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .conv-rail {
+    display: flex;
+  }
+}
+
+@media (min-width: 1360px) {
+  .conv-rail {
+    flex-basis: 17.5rem;
+    width: 17.5rem;
+    padding-inline: 1.25rem;
+  }
+
+  .conv-rail-label,
+  .conv-rail-toggle {
+    display: block;
+  }
+
+  .conv-rail[data-strip] {
+    flex-basis: 4.75rem;
+    width: 4.75rem;
+    padding-inline: 0.75rem;
+  }
+
+  .conv-rail[data-strip] .conv-rail-label {
+    display: none;
+  }
+}
+
+.conv-rail-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  border-radius: var(--radius-control);
+  border: 1px solid transparent;
+  padding: 0.6rem;
+  text-align: left;
+  transition: border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.conv-rail-item:hover {
+  border-color: rgba(242, 239, 232, 0.18);
+  background: rgba(242, 239, 232, 0.04);
+}
+
+.conv-rail-item.is-picked {
+  border-color: rgba(245, 165, 36, 0.45);
+  background: rgba(245, 165, 36, 0.07);
+}
+
+.conv-rail-seq {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border-radius: 3px;
+  border: 1px solid rgba(242, 239, 232, 0.16);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: rgba(242, 239, 232, 0.6);
+  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+}
+
+.conv-rail-item:hover .conv-rail-seq {
+  border-color: rgba(242, 239, 232, 0.4);
+  color: var(--color-ink);
+}
+
+.conv-rail-item.is-picked .conv-rail-seq {
+  border-color: var(--color-amber);
+  background: var(--color-amber);
+  color: var(--color-ground);
+}
+
+.conv-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.conv-column {
+  width: 100%;
+  max-width: 47.5rem;
+  margin: 0 auto;
+  padding: 0 clamp(1rem, 4vw, 2rem);
+}
+
+/* The owner's own words, set apart from everything Olai says. */
+.conv-bubble {
+  max-width: 34rem;
+  margin-left: auto;
+  border-radius: 12px;
+  border: 1px solid rgba(245, 165, 36, 0.3);
+  background: linear-gradient(180deg, rgba(245, 165, 36, 0.12), rgba(245, 165, 36, 0.04));
+  padding: 1rem 1.15rem;
+}
+
+.conv-steps {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.conv-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.1rem minmax(0, 1fr);
+  gap: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+/* The thread the markers hang from. It stops at the last step rather than
+   trailing into the space under it. */
+.conv-step:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 0.24rem;
+  top: 1.05rem;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(242, 239, 232, 0.3), rgba(242, 239, 232, 0.1));
+}
+
+.conv-mark {
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-top: 0.4rem;
+  border-radius: 2px;
+  background: var(--color-amber);
+}
+
+.conv-mark[data-tone="owner"] {
+  background: rgba(242, 239, 232, 0.65);
+}
+
+.conv-mark[data-tone="binance"] {
+  background: var(--color-ok);
+}
+
+.conv-mark[data-tone="rule"] {
+  background: var(--color-warn);
+}
+
+.conv-mark[data-tone="neutral"] {
+  background: rgba(242, 239, 232, 0.32);
+}
+
+.conv-sentence {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(242, 239, 232, 0.82);
+}
+
+.conv-open {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: rgba(242, 239, 232, 0.55);
+  transition: color 0.25s ease;
+}
+
+.conv-open:hover {
+  color: var(--color-amber);
+}
+
+.conv-link {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ok);
+  border-bottom: 1px solid rgba(79, 230, 210, 0.35);
+  transition: border-color 0.25s ease;
+}
+
+.conv-link:hover {
+  border-color: var(--color-ok);
+}
+
+/* The proposal. The one card on the screen that carries a decision. */
+.conv-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(245, 165, 36, 0.28);
+  background:
+    radial-gradient(38rem 22rem at 92% -20%, rgba(245, 165, 36, 0.14), rgba(10, 10, 10, 0) 70%),
+    linear-gradient(180deg, rgba(242, 239, 232, 0.05), rgba(242, 239, 232, 0.012));
+  box-shadow: 0 34px 80px -50px rgba(0, 0, 0, 0.95);
+}
+
+.conv-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(242, 239, 232, 0) 0%,
+    rgba(242, 239, 232, 0.3) 20%,
+    rgba(245, 165, 36, 0.55) 52%,
+    rgba(242, 239, 232, 0) 100%
+  );
+}
+
+.conv-action {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.9rem, 4.6vw, 3.1rem);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--color-ink);
+}
+
+.conv-welcome {
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid rgba(242, 239, 232, 0.1);
+  background:
+    radial-gradient(30rem 20rem at 8% -30%, rgba(245, 165, 36, 0.12), rgba(10, 10, 10, 0) 68%),
+    linear-gradient(180deg, rgba(242, 239, 232, 0.04), rgba(242, 239, 232, 0.008));
+}
+
+.conv-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 3px;
+  background: var(--color-amber);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--color-ground);
+}
+
+.conv-example {
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(242, 239, 232, 0.16);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  color: rgba(242, 239, 232, 0.75);
+  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+}
+
+.conv-example:hover {
+  border-color: rgba(245, 165, 36, 0.6);
+  background: rgba(245, 165, 36, 0.08);
+  color: var(--color-ink);
+}
+
+/* The composer never leaves the screen, so the conversation scrolls under it. */
+.conv-composer {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  padding-bottom: 1rem;
+  background: linear-gradient(to top, #0a0a0a 58%, rgba(10, 10, 10, 0.86) 82%, rgba(10, 10, 10, 0));
+}
+
+.conv-composer-box {
+  border-radius: 12px;
+  border: 1px solid rgba(242, 239, 232, 0.12);
+  background: rgba(16, 16, 16, 0.92);
+  padding: 0.85rem;
+  transition: border-color 0.25s ease;
+}
+
+.conv-composer-box:focus-within {
+  border-color: rgba(245, 165, 36, 0.55);
+}
+
+.conv-textarea {
+  display: block;
+  width: 100%;
+  resize: none;
+  background: transparent;
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.conv-textarea::placeholder {
+  color: rgba(242, 239, 232, 0.5);
+}
+
+.conv-textarea:disabled {
+  color: rgba(242, 239, 232, 0.55);
+}
+
+.conv-textarea:focus {
+  outline: none;
+}
+
+.conv-drawer-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(242, 239, 232, 0.22);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.conv-drawer-button:hover {
+  border-color: var(--color-ink);
+  background: rgba(242, 239, 232, 0.05);
+}
+
+.conv-stop {
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(255, 92, 122, 0.55);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-bad);
+  transition: background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease;
+}
+
+.conv-stop:hover:not(:disabled) {
+  background: rgba(255, 92, 122, 0.12);
+  border-color: var(--color-bad);
+}
+
+.conv-stop:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.conv-stop.is-stopped {
+  border-color: rgba(242, 239, 232, 0.3);
+  color: var(--color-ink);
+}
+
+.conv-stop.is-stopped:hover:not(:disabled) {
+  background: rgba(242, 239, 232, 0.06);
+  border-color: var(--color-ink);
+}
+
+.conv-drawer {
+  position: fixed;
+  z-index: 110;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 88svh;
+  border-top: 1px solid rgba(242, 239, 232, 0.14);
+  border-radius: 16px 16px 0 0;
+  background: #0b0b0b;
+  box-shadow: 0 -40px 90px -50px rgba(0, 0, 0, 0.95);
+}
+
+@media (min-width: 768px) {
+  .conv-drawer {
+    top: 0;
+    left: auto;
+    width: min(31rem, 100vw);
+    height: auto;
+    border-top: 0;
+    border-left: 1px solid rgba(242, 239, 232, 0.14);
+    border-radius: 0;
+    box-shadow: -40px 0 90px -50px rgba(0, 0, 0, 0.95);
+  }
+}
+
+.conv-tab {
+  flex: 1 1 0;
+  border-bottom: 1px solid transparent;
+  padding: 0.7rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(242, 239, 232, 0.55);
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+
+.conv-tab:hover {
+  color: var(--color-ink);
+}
+
+.conv-tab.is-on {
+  color: var(--color-amber);
+  border-bottom-color: var(--color-amber);
+}
+
+@media (max-width: 767px) {
+  .conv-tab {
+    min-height: 44px;
+  }
+
+  /* A thumb needs 44px, including the small control that opens a ledger line. */
+  .conv-drawer-button,
+  .conv-stop,
+  .conv-example,
+  .conv-open,
+  .conv-link,
+  .conv-tap {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 }

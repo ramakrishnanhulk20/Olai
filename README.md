@@ -50,6 +50,9 @@ An olai is the palm leaf that old Tamil ledgers were written on. Once a line was
 **Approve or reject.** The owner's yes or no is a real HTTP call gated by their own bearer token, never inferred from the model's text. Approving the same session twice still sends exactly one order.
 `packages/agent/src/session/session.ts`
 
+**The desk reads like a conversation.** One screen at `/app`: a welcome card with three steps, a box that asks, then every step Olai takes as a plain sentence, "Olai searched the Bazaar", "Olai paid api.nansen.ai $0.01 from the wallet", "Settled on BNB Smart Chain" with the hash linked to BscScan. Then the proposal card with the rulebook's verdict, **Approve** and **Reject**, and what happened next in the same sentences. Nothing on it is written by the screen: each sentence is a ledger line read back, with the raw line one click under it. The rulebook, the wallet and account, and the whole receipt sit behind a **Details** drawer, and **Stop Olai** is in the header. A visitor with no token gets a replay of a recorded run.
+`packages/web/src/components/conversation/`, `packages/web/src/lib/describe.ts`
+
 **Ledger and proof.** Every decision, payment and order is one hash-chained SQLite line. Editing an old line, even by hand-editing the file, breaks every hash after it, and one route names the first broken line.
 `packages/agent/src/ledger/ledger.ts`, `packages/agent/src/ledger/hash.ts`
 

@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Desk } from "@/components/desk/desk";
+import { Conversation } from "@/components/conversation/conversation";
 
 export const metadata: Metadata = {
   title: "Olai: the owner's desk",
-  description: "Write the rulebook, ask Olai a question, approve the trade, read the ledger.",
+  description:
+    "Ask Olai a question, watch it work, approve the trade, and read every cent it spent.",
 };
 
 export default function DeskPage() {
-  return <Desk />;
+  return <Conversation />;
 }

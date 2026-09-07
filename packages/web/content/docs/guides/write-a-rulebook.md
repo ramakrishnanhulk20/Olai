@@ -192,15 +192,23 @@ loosening it.
 
 ## Saving one
 
-On the desk, the Rulebook panel is a form matching every field above one for one: money fields
-carry a `$` prefix, "Markets it may trade" adds a chip per symbol, "May sell what it does not
-hold" and "Only trade between two hours, UTC" are switches, and "Cut back after losing" lists the
-drawdown tiers with an "Add a tier" button. A box marked "Not yours to change" explains that
-leverage is off and one side per market is on, because those are not settings, they are things
-Olai cannot do. **Save the rulebook** submits the form; a save the schema refuses shows the exact
-reason under the field it belongs to, because the agent returns `issues` per field and the panel
-indexes them by path (`packages/web/src/components/desk/rulebook-panel.tsx`), and a save that
-succeeds says "Saved, and recorded in the ledger."
+### From the desk
+
+Open **Details** and stay on the first tab, **Rulebook**. Step 1 of the welcome card, **Check the
+rulebook**, shows the rules in force in one line and has an **Edit** link that lands on the same
+tab. The tab is a form matching every field above one for one: money fields carry a `$` prefix,
+"Markets it may trade" adds a chip per symbol, "May sell what it does not hold" and "Only trade
+between two hours, UTC" are switches, and "Cut back after losing" lists the drawdown tiers with an
+"Add a tier" button. A box marked "Not yours to change" explains that leverage is off and one side
+per market is on, because those are not settings, they are things Olai cannot do. **Save the
+rulebook** submits the form; a save the schema refuses shows the exact reason under the field it
+belongs to, because the agent returns `issues` per field and the form indexes them by path
+(`packages/web/src/components/desk/rulebook-panel.tsx`, mounted by
+`packages/web/src/components/conversation/drawer.tsx`), and a save that succeeds says "Saved, and
+recorded in the ledger." The save shows up on the **Ledger** tab as "Rulebook saved", with the
+name of the rulebook.
+
+### From the command line
 
 The same write as a plain HTTP call, useful for scripting a whole rulebook at once:
 

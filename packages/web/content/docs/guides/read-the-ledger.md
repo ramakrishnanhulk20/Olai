@@ -11,13 +11,20 @@ account of what it bought, is commentary.
 
 ## From the desk
 
-The Ledger panel lists lines newest first, filtered by the chips above it: Everything, Payments,
-Orders, Rules, Notes. Click a line to expand it: the actor, the line number, the hash, a link to
-BscScan when the line carries a transaction hash, and the raw JSON payload underneath. The
-**Verify chain** button recomputes the whole hash chain on the service, not anything already in
-the browser, and reports either "Chain holds across N lines" or "Broken at line N" with the
-reason, the same two shapes `GET /api/ledger/verify` returns below. This is
-`packages/web/src/components/desk/ledger-table.tsx`.
+The receipt is in the **Details** drawer, third tab, **Ledger**. It reads back as the same plain
+sentences the conversation uses, newest first, with the line count beside the heading and filter
+chips above: Everything, Payments, Orders, Rules, Notes. A line carrying a settlement hash links
+it to BscScan. Click **The ledger line** on any sentence and the raw record opens underneath it:
+the line number, the kind, the actor, the first twelve characters of the hash, and the whole JSON
+payload.
+
+**Verify chain** recomputes the whole hash chain on the service, not anything already sitting in
+the browser, and answers either "Chain holds across N lines" or "Broken at line N" with the
+reason, the same two shapes `GET /api/ledger/verify` returns below. A replay has no service to
+recompute anything, so it reads "Recorded chain: verified at capture, N lines" instead of offering
+a button that would prove nothing. This is
+`packages/web/src/components/conversation/ledger-list.tsx`, with the sentences from
+`packages/web/src/lib/describe.ts`.
 
 ## From the command line
 

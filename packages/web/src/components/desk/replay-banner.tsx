@@ -44,7 +44,7 @@ export function ReplayBanner({ onOpenGate }: { onOpenGate: () => void }) {
         <button
           type="button"
           onClick={onOpenGate}
-          className="group w-fit shrink-0 text-left text-[0.85rem] leading-[1.45] text-ink/55 transition-colors duration-300 hover:text-amber"
+          className="conv-tap group w-fit shrink-0 text-left text-[0.85rem] leading-[1.45] text-ink/55 transition-colors duration-300 hover:text-amber"
         >
           <span className="border-b border-ink/20 pb-0.5 transition-colors duration-300 group-hover:border-amber">
             Owner? Enter your token

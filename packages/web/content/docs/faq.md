@@ -130,14 +130,18 @@ and the same rulebook, sized to the balance you give it (the shipped defaults as
 ## What's still missing?
 
 The owner's desk ships at `/app` (`packages/web/src/app/app/page.tsx`, components under
-`packages/web/src/components/desk`): the rulebook editor, the ask box, the thinking stream,
-approve and reject, a picker for stepping back through past sessions, the ledger with its filter
-chips and verify button, and the kill switch, all against the same owner API the rest of this site
-describes.
+`packages/web/src/components/conversation`), against the same owner API the rest of this site
+describes. It is one conversation: a welcome card headed "Your analyst is ready." with three
+steps, a box that asks, Olai's steps arriving as plain sentences with the raw ledger line one
+click under each, a proposal card carrying the rulebook's verdict with **Approve** and
+**Reject**, a left rail of **Earlier questions**, a **Stop Olai** button in the header, and a
+**Details** drawer with three tabs: Rulebook, Wallet and account, and Ledger with its filter chips
+and **Verify chain** button. A visitor with no token gets a replay of a recorded run instead,
+under the banner "A replay of a recorded run. Nothing here is live."
 
-Three things are still missing. The account panel lists every open position as a plain scrollable
-list rather than a sorted "top holdings" summary, so an account with many open positions is harder
-to scan than it should be. On Windows, the Binance token file is written
+Three things are still missing. The **Wallet and account** tab lists every open position as a
+plain scrollable list rather than a sorted "top holdings" summary, so an account with many open
+positions is harder to scan than it should be. On Windows, the Binance token file is written
 with mode 0600, but NTFS ignores POSIX bits, so any process running as the same user can read it;
 locking it down with NTFS ACLs has not been done. And the Binance MCP door stays closed by
 Binance's own allowlist (see above), so the coded and tested MCP client sits unused.

@@ -58,7 +58,9 @@ settlement transaction hash, the rulebook's verdict, the approval, and the fill.
 ## What's still missing
 
 The owner's desk ships at `/app` (`packages/web/src/app/app/page.tsx`, components under
-`packages/web/src/components/desk`), reading and writing through the owner API this documentation
-describes: the rulebook editor, the ask box, the thinking stream, approve and reject, the ledger,
-and the kill switch. What is still missing, and the other open gaps, are listed in the
+`packages/web/src/components/conversation`), reading and writing through the owner API this
+documentation describes. It is one conversation: a welcome card with three steps, a box to ask in,
+Olai's steps arriving as plain sentences, a proposal card with **Approve** and **Reject**, a
+**Details** drawer holding the rulebook, the wallet and account, and the ledger, and a **Stop
+Olai** button in the header. What is still missing, and the other open gaps, are listed in the
 [FAQ](./faq.md#whats-still-missing).

@@ -105,7 +105,9 @@ fresh account snapshot. A refused proposal writes a `rule.refused` line and the 
 a pending order. An allowed one writes a `proposal` line and waits.
 
 **The owner decides.** `POST /api/sessions/:id/approve` or `/reject`. Approval is a real HTTP
-call with the owner's token. It is never inferred from anything the model wrote.
+call with the owner's token. It is never inferred from anything the model wrote. On the desk that
+call is the **Approve** button on the proposal card, and **Reject** carries a one-line reason with
+it.
 
 **The order goes out, once.** On approval the rulebook runs a second time, against a snapshot
 taken at that moment, because the day's loss, the open positions and the kill switch can all

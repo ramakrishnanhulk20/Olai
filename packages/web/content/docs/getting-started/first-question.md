@@ -19,8 +19,10 @@ With no question after the `--`, it asks that same default question
 
 This page runs the whole path from the command line on purpose, since it is the fastest way to
 see every step at once with nothing hidden. To watch the same path by clicking instead, open the
-desk at `/app`: write a rulebook, type the question into **Ask Olai**, watch it stream into the
-**Thinking** panel, and approve or reject the proposal card it returns.
+desk at `/app`. The welcome card, **Your analyst is ready.**, walks the same three steps: check
+the rulebook, ask a question, approve or reject what Olai proposes. Type into the box at the
+bottom or tap one of the three example chips, watch Olai's steps arrive one plain sentence at a
+time, and answer the proposal card at the end.
 
 ## What it prints, in order
 

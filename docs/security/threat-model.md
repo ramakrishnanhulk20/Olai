@@ -5,9 +5,10 @@ Written from the code as it exists in `packages/agent/src`. Routes under
 Bazaar client, the exchange REST client and the MCP client are all coded. Since the first
 reading, `src/boot.ts` wires `createApp` and the OAuth routes to the
 real dependencies and `src/index.ts` serves them. The owner's desk shipped too, at
-`packages/web/src/app/app/page.tsx` with components under `packages/web/src/components/desk`; it
-is covered as its own entry point in section 3, because a browser is a different kind of target
-than a terminal calling curl directly.
+`packages/web/src/app/app/page.tsx` with components under
+`packages/web/src/components/conversation` and its sentences from
+`packages/web/src/lib/describe.ts`; it is covered as its own entry point in section 3, because a
+browser is a different kind of target than a terminal calling curl directly.
 
 Olai's exchange leg trades through Binance's exchange REST API on an isolated sub-account
 (`src/exchange/rest.ts`), not through the Binance MCP server. Binance's authorization-server
@@ -86,7 +87,7 @@ What an attacker could take or break, and why each one matters.
 
 | Entry point | Where in code | What reaches it |
 |---|---|---|
-| The desk in the browser | `packages/web/src/app/app/page.tsx`, `packages/web/src/components/desk/*` | The owner's own browser tab, nothing else. Gated by the owner token, typed once into `gate.tsx` and held in `sessionStorage` under the key `olai.owner-token`; read straight into the `Authorization` header on every call (`packages/web/src/lib/api.ts`, `packages/web/src/lib/sse.ts`) and never placed in a URL, a cookie, a React key, or a log. A 401 from any call clears the token and drops back to the gate. Every route it calls is one of the rows below, reached only from `OLAI_WEB_ORIGIN` (CORS in `src/api/app.ts`). The landing page at `/` (`packages/web/src/app/page.tsx`) is a different, unauthenticated surface: it reads only the public `GET /health` and a ledger sequence the owner exported ahead of time to `packages/web/public/ledger-sample.json`; it holds no token at all |
+| The desk in the browser | `packages/web/src/app/app/page.tsx`, `packages/web/src/components/conversation/*`, `packages/web/src/lib/describe.ts` | The owner's own browser tab, nothing else. Gated by the owner token, typed once into the gate screen ("One token. One owner.", `packages/web/src/components/desk/gate.tsx`) and held in `sessionStorage` under the key `olai.owner-token`; read straight into the `Authorization` header on every call (`packages/web/src/lib/api.ts`, `packages/web/src/lib/sse.ts`) and never placed in a URL, a cookie, a React key, or a log. A 401 from any call clears the token and drops back to the gate. Every route it calls is one of the rows below, reached only from `OLAI_WEB_ORIGIN` (CORS in `src/api/app.ts`). Ledger lines become the sentences on screen through `lib/describe.ts`, which reads named fields off the parsed entry and prints the raw payload as escaped JSON text, so nothing a merchant or the model wrote is ever markup. Without a token the same screen plays a recorded run out of `packages/web/public/ledger-sample.json` and holds no token at all, and the landing page at `/` (`packages/web/src/app/page.tsx`) is a different, unauthenticated surface reading only the public `GET /health` and that same export |
 | `GET /health` | `src/api/app.ts` | Public, no auth, returns `ok`, `dryRun`, `killed`, `version` only |
 | `GET /api/rulebook`, `PUT /api/rulebook` | `src/api/app.ts` | Owner token required (`ownerAuth`); body validated by `rulebookSchema` in `src/policy/rulebook.ts` via `RulebookStore.save` |
 | `POST /api/ask` | `src/api/app.ts` (`askSchema`) | Owner token; runs `SessionRunner.ask` -> `runAnalyst`, the only entry that spends Anthropic tokens and can trigger `buy_data` |
@@ -194,19 +195,24 @@ What an attacker could take or break, and why each one matters.
   from outside the process is used unparsed.
 
 - **The desk adds a browser, so it is scoped like one.** `packages/web/src/app/app/page.tsx` and
-  `packages/web/src/components/desk/*`. A script that ran inside the page could read
+  `packages/web/src/components/conversation/*`. A script that ran inside the page could read
   `sessionStorage` the same as the desk's own code does, so the mitigation is in what the desk
   refuses to load or render, not in the storage API: no third-party script tag anywhere in the
   bundle (fonts are self-hosted through `next/font`), and nothing from the network is ever
   rendered through `dangerouslySetInnerHTML` or otherwise as HTML, only as text React itself
-  escapes. The token lives in `sessionStorage`, not `localStorage`, so it dies when the tab closes
-  rather than persisting across browser restarts (`packages/web/src/lib/token.ts`).
+  escapes. That holds for the sentences the conversation is made of:
+  `packages/web/src/lib/describe.ts` builds each one from named fields of the parsed ledger entry,
+  and the raw line under **The ledger line** is `JSON.stringify` output in a `<pre>`, so a
+  merchant name, a rejection reason or a rulebook name cannot become markup. The token lives in
+  `sessionStorage`, not `localStorage`, so it dies when the tab closes rather than persisting
+  across browser restarts (`packages/web/src/lib/token.ts`).
   `OLAI_WEB_ORIGIN` in `src/api/app.ts` is the only origin the API's CORS policy answers, so a
   page on any other site cannot get a browser to carry the token to it even if it talked the owner
-  into visiting. The landing page at `/` (`packages/web/src/app/page.tsx`) is a separate,
-  unauthenticated surface built to need no token at all: it reads only public `GET /health` and a
-  ledger sequence the owner captured ahead of time into `packages/web/public/ledger-sample.json`,
-  so there is nothing on it for a browser bug to leak.
+  into visiting. The replay a visitor without a token sees, and the landing page at `/`
+  (`packages/web/src/app/page.tsx`), are unauthenticated surfaces built to need no token at all:
+  they read only public `GET /health` and a ledger sequence the owner captured ahead of time into
+  `packages/web/public/ledger-sample.json`, so there is nothing on either for a browser bug to
+  leak.
 
 - **Binance's own controls (outside Olai's code, relied upon).** From
   Binance's own documentation: no withdrawal scope exists for the MCP server;

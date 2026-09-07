@@ -11,12 +11,35 @@ order, and it always carries the owner's own token, never something the model ca
 
 ## From the desk
 
-The proposal card shows the rulebook's own verdict above the two buttons: "The rulebook allows
-this" or "The rulebook refuses this," each reason lined up with the rule id that produced it, and
-the biggest order size the rules allow right now. Click **Approve** to send it (the button reads
-"Sending…" while the call is in flight), or click **Reject** to reveal a one-line reason field and
-a **Record the rejection** button. Both buttons disable the instant either is clicked, so a second
-click cannot send a second order. This is `packages/web/src/components/desk/proposal-card.tsx`.
+The proposal arrives as a card in the conversation, after the steps Olai took to reach it. The
+action is the biggest type on the card, `BUY ETHUSDT for $15.00` or `HOLD`, with the order type
+under it. Then **How sure it is** as a meter, **Data it says it used** (each merchant, what it
+cost, and its settlement hash linked to BscScan, under the plain note that the model writes this
+list and the receipt is the record), and **What could go wrong**, the risks the model named.
+
+Below those sits the rulebook's own verdict: "The rulebook allows this" or "The rulebook refuses
+this", the biggest order the rules allow right now, and each reason lined up with the rule id that
+produced it.
+
+**Approve** sends it; the button reads "Sending" while the call is in flight. **Reject** opens a
+one-line reason field, placeholder "One line: why not?", and a **Record the rejection** button.
+Both buttons disable the instant either is clicked, so a second click cannot send a second order.
+When Olai proposes holding there are no buttons and the card says "Olai recommends holding.
+Nothing to approve."
+
+What follows lands under the heading "What happened next", in the same plain sentences the rest of
+the conversation uses:
+
+```
+You approved the buy of ETHUSDT
+Olai sent the order to Binance
+Binance filled 0.0059 ETHUSDT for $14.75
+```
+
+In a dry run the last two lines become "Dry run: the order was not sent". A fill that carries an
+average price reads "Binance filled 0.0059 ETHUSDT at $2,500.01" instead. This is
+`packages/web/src/components/conversation/proposal.tsx`, with the sentences from
+`packages/web/src/lib/describe.ts`.
 
 ## From the command line
 

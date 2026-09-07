@@ -7,8 +7,9 @@ description: Every route in src/api/app.ts with its method, auth, body, response
 # Owner API
 
 Every route lives in `packages/agent/src/api/app.ts`. There is one user, the owner, and one
-token. The owner's desk (`packages/web/src/app/app/page.tsx`) is the one browser client of this
-API; every example below also works from a terminal, which is how they are written.
+token. The owner's desk (`packages/web/src/app/app/page.tsx`, components under
+`packages/web/src/components/conversation`) is the one browser client of this API; every example
+below also works from a terminal, which is how they are written.
 
 ## What applies to every route
 
@@ -17,7 +18,8 @@ API; every example below also works from a terminal, which is how they are writt
   token in the browser's `sessionStorage`, under the key `olai.owner-token`
   (`packages/web/src/lib/token.ts`), reads it straight into this header on every call, and never
   places it in a URL, a cookie, a React key, or a log; a 401 clears it and drops back to the gate
-  screen. The OAuth routes are a separate group, described at the bottom of this page.
+  screen, "One token. One owner." The OAuth routes are a separate group, described at the bottom
+  of this page.
 - **Rate limit.** 60 requests per 60 seconds per address, counted on the socket address unless
   `OLAI_TRUST_PROXY` is `true`, in which case the first entry of `X-Forwarded-For` is used.
   Over the limit is a 429.

@@ -8,13 +8,20 @@ description: How to stop the agent, what stopping covers, and what it does not.
 
 ## From the desk
 
-The toggle in the header shows "Running" or "Stopped" next to it. Turning it off asks first: a
-dialog titled "Stop Olai?" with the line "Every order and payment is refused until you resume,"
-and two buttons, **Stop Olai** and **Keep running**. Turning it back on is one click with no
-dialog, because undoing a stop is the safe direction and does not need a second confirmation. The
-status chip beside it reads Live, Dry run, Stopped, No service, or Checking, read from the same
-`/health` poll described below. This is
-`packages/web/src/components/desk/kill-switch.tsx` and
+**Stop Olai** is the last button in the header, to the right of **Details**. Clicking it asks
+first: a dialog headed "Stop Olai?" with the line "Every order and payment is refused until you
+resume," and two buttons, **Stop Olai** and **Keep running**. Once stopped, the same button reads
+**Resume Olai** and one click undoes it with no dialog, because undoing a stop is the safe
+direction and does not need a second confirmation.
+
+The status chip left of the buttons reads LIVE, DRY RUN, STOPPED, NO SERVICE, CHECKING or REPLAY,
+from the same `/health` poll described below. While the flag is on, the box at the bottom refuses
+new questions with "Olai is stopped. Resume it at the top of the screen before asking anything."
+Both the stop and the resume land in the conversation as sentences of their own, "You stopped
+Olai" and "You resumed Olai". A visitor watching the replay sees the button disabled, with the
+hover note "Stopping Olai is the owner's to do." This is
+`packages/web/src/components/conversation/stop-button.tsx`,
+`packages/web/src/components/conversation/header.tsx` and
 `packages/web/src/components/desk/status-chip.tsx`.
 
 ## From the command line

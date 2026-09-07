@@ -10,6 +10,7 @@ import type {
   SessionRecord,
   Verdict,
 } from "./api";
+import { describe } from "./describe";
 import type { BrainEvent } from "./sse";
 
 /**
@@ -66,6 +67,16 @@ export const recordedEntries: LedgerEntry[] = rows.map((row) => ({
 }));
 
 export const recordedLines = recordedEntries.length;
+
+/**
+ * The same recorded lines, tagged with the label the replay uses for its one
+ * session, so a screen that groups lines by session can read the recorded run
+ * the way it reads a live one. The export carries no session id of its own.
+ */
+export const recordedSessionEntries: LedgerEntry[] = recordedEntries.map((entry) => ({
+  ...entry,
+  sessionId: RECORDED_SESSION_ID,
+}));
 
 /** The same shape the live feed carries, one event per recorded line. */
 export const recordedStream: BrainEvent[] = rows.map((row) => ({
@@ -166,8 +177,13 @@ export const recordedSession: SessionRecord = {
   ...(fill ? { orderResult: fill } : {}),
 };
 
-/** The fill, in the export's own words, for the control that replaced Approve. */
-export const recordedFillSummary = filledRow?.summary ?? "";
+/**
+ * The fill as a sentence, for the control that replaced Approve. It goes through
+ * the same reader the thread uses, so the owner is never shown the raw line the
+ * venue wrote.
+ */
+const filledEntry = recordedEntries.find((entry) => entry.kind === "order.filled");
+export const recordedFillSentence = filledEntry ? describe(filledEntry).sentence : "";
 
 /**
  * The rulebook a fresh install runs under, copied from the agent's
