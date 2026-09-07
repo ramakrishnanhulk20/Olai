@@ -4,7 +4,7 @@ An analyst agent that buys its own market intelligence a cent at a time from its
 
 Most agents on Agent OS use one door. Olai uses four at once: it finds data in the Bazaar, pays for it from its Binance wallet over x402, reads the market through the exchange API, and keeps a receipt for every cent and every order.
 
-[Live App](PENDING-LINK) · [Documentation](PENDING-LINK/docs) · [Demo Video](PENDING-LINK)
+[Live App](https://olai-web-self.vercel.app/) · [Documentation](https://olai-web-self.vercel.app/docs) · [Demo Video](PENDING-LINK)
 
 ## Live deployments
 
@@ -257,7 +257,7 @@ Named for what each one costs you.
 
 ### Nothing to install
 
-- **The landing page.** [Live App](PENDING-LINK). Its ledger section replays a captured real session line by line, every settlement hash linked to BscScan.
+- **The landing page.** [Live App](https://olai-web-self.vercel.app/). Its ledger section replays a captured real session line by line, every settlement hash linked to BscScan.
 - **The money, on chain.** Three cents, each one real USDT on BNB Smart Chain, each with a receipt anybody can open: [0xd31a8a75](https://bscscan.com/tx/0xd31a8a75f6df501e1aba6166b248a2a8a1e928a52c401fae9465181082ad9a43), [0x6962ad36](https://bscscan.com/tx/0x6962ad36ff991759c5801254aefaba68f8041a401f5a57b022a66976750f4335) and [0xb495d3c9](https://bscscan.com/tx/0xb495d3c91ebff850ce01e19dc8826e8adf433028b3516f48a8ad04b1522ce9bb). A Binance Agentic Wallet paid a Bazaar merchant over x402 on all three, and the chain says so without anyone having to take this README's word for it.
 - **The attacks.** [Fourteen attacks were run against Olai, thirteen were blocked, and the one that was not is written up in full](docs/security/attacks/SUMMARY.md).
 
